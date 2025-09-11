@@ -1,11 +1,11 @@
 <template>
   <div class="window-height flex column flex-center fixed-center" style="width: 75vw">
     <div class="text-center q-mb-xl">
-      <h1 class="text-h4 text-weight-bold q-mb-sm">Quan ly giao ly</h1>
-      <p>Ung dung danh cho Giao Ly Vien</p>
+      <h1 class="text-h4 text-weight-bold q-mb-sm">QUẢN LÝ GIÁO LÝ</h1>
+      <p>Ứng dụng dành cho Giáo Lý Viên</p>
     </div>
     <div class="full-width">
-      <q-form class="q-gutter-y-md">
+      <q-form class="q-gutter-y-md" @submit="login">
         <q-input class="full-width" outlined label="Login ID" />
         <q-input class="full-width" outlined label="Password" type="password" />
         <div class="">
@@ -21,5 +21,11 @@
 </template>
 
 <script setup>
-//
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const login = () => {
+  router.replace('/')
+}
 </script>
