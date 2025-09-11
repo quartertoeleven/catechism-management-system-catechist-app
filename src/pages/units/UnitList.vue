@@ -3,7 +3,7 @@
     <q-list bordered padding class="rounded-borders">
       <q-item-label header>Lớp của tôi</q-item-label>
 
-      <q-item clickable v-ripple>
+      <q-item clickable v-ripple @click="navigateToUnitDetails('GL2025-VD1-A')">
         <q-item-section>
           <q-item-label lines="1">Vào Đời 1A</q-item-label>
           <q-item-label caption>GL2025-VD1-A</q-item-label>
@@ -36,3 +36,17 @@
     </q-list>
   </div>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router'
+import { useAppStore } from 'stores/app-store'
+
+const router = useRouter()
+const appStore = useAppStore()
+const { setPageTitle } = appStore
+setPageTitle('Quản lý lớp')
+
+const navigateToUnitDetails = (unitCode) => {
+  router.push(`/units/${unitCode}`)
+}
+</script>
