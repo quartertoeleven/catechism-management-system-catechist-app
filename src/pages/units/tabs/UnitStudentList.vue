@@ -21,7 +21,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 const contacts = [
   {
     name: 'Phêrô Nguyễn Văn A',
@@ -114,12 +114,4 @@ const contacts = [
     letter: 'N',
   },
 ]
-
-export default {
-  setup() {
-    return {
-      contacts,
-    }
-  },
-}
 </script>
