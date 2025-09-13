@@ -25,7 +25,7 @@
         <q-tab name="movies" icon="movie" />
       </q-tabs> -->
 
-      <q-tabs inline-label class="bg-primary text-white shadow-2">
+      <q-tabs class="bg-primary text-white shadow-2 fixed-bottom" style="z-index: 1">
         <q-route-tab :to="`/units/${currentUnitCode}`" icon="info" label="Thông tin" />
         <q-route-tab :to="`/units/${currentUnitCode}/students`" icon="list" label="Học viên" />
         <q-route-tab
@@ -35,9 +35,7 @@
         />
       </q-tabs>
 
-      <q-page-container>
-        <router-view />
-      </q-page-container>
+      <router-view style="margin-bottom: 5rem" />
     </div>
   </div>
 </template>
