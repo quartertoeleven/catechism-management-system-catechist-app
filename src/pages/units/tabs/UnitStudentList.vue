@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <q-list>
       <q-item v-for="contact in contacts" :key="contact.student_code" class="" clickable v-ripple>
         <q-item-section avatar>
