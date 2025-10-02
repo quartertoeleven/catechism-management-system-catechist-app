@@ -5,11 +5,22 @@
       <p>Ứng dụng dành cho Giáo Lý Viên</p>
     </div>
     <div class="full-width">
-      <q-form class="q-gutter-y-md" @submit="login">
-        <q-input class="full-width" outlined label="Login ID" />
-        <q-input class="full-width" outlined label="Password" type="password" />
+      <q-form class="q-gutter-y-md" @submit="handleLogin">
+        <q-input
+          v-model.trim="loginFormData.username"
+          class="full-width"
+          outlined
+          label="ID đăng nhập"
+        />
+        <q-input
+          v-model="loginFormData.password"
+          class="full-width"
+          outlined
+          label="Mật khẩu"
+          type="password"
+        />
         <div class="">
-          <q-btn class="full-width" type="submit" color="primary" label="Login" no-caps />
+          <q-btn class="full-width" type="submit" color="primary" label="Đăng nhập" no-caps />
         </div>
       </q-form>
     </div>
@@ -21,11 +32,21 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useAuthStore } from 'src/stores/auth-store'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const authStore = useAuthStore()
+const { login } = authStore
 
-const login = () => {
-  router.replace('/')
+const loginFormData = ref({
+  username: '',
+  password: '',
+})
+
+const handleLogin = async () => {
+  await login(loginFormData.value.username, loginFormData.value.password)
+  router.push({ name: 'home' })
 }
 </script>
