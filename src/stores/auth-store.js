@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import { login as LoginAPI } from '../services/auth-service'
+import { login as LoginAPI, getAuth } from '../services/auth-service'
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false)
@@ -11,12 +11,16 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const login = async (login_id, password) => {
+    await LoginAPI(login_id, password)
+    setIsAuthenticated(true)
+  }
+
+  const getAuthState = async () => {
     try {
-      await LoginAPI(login_id, password)
+      await getAuth()
       setIsAuthenticated(true)
     } catch (error) {
-      const { data } = error.response
-      console.log(data.message)
+      console.log(error)
     }
   }
 
@@ -27,6 +31,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     isAuthenticated,
     login,
+    getAuthState,
     logout,
   }
 })

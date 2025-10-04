@@ -36,13 +36,26 @@ export default defineRouter(function ({ store /*, ssrContext */ }) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
 
-  Router.beforeEach((to, from, next) => {
+  Router.beforeEach(async (to, from, next) => {
     console.log(authStore.isAuthenticated)
-    if (to.name !== 'login' && !authStore.isAuthenticated) {
-      next({ name: 'login' })
-    } else {
-      next()
+    if (!authStore.isAuthenticated) {
+      console.log('get auth state')
+      await authStore.getAuthState()
+      if (authStore.isAuthenticated) {
+        if (to.name === 'login') {
+          return next({ name: 'home' })
+        }
+        return next()
+      } else {
+        console.log('not really')
+        if (to.name !== 'login') {
+          return next({ name: 'login' })
+        }
+      }
+    } else if (authStore.isAuthenticated && to.name === 'login') {
+      return next({ name: 'home' })
     }
+    return next()
   })
 
   return Router
