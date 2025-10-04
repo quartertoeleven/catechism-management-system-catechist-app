@@ -37,9 +37,7 @@ export default defineRouter(function ({ store /*, ssrContext */ }) {
   })
 
   Router.beforeEach(async (to, from, next) => {
-    console.log(authStore.isAuthenticated)
     if (!authStore.isAuthenticated) {
-      console.log('get auth state')
       await authStore.getAuthState()
       if (authStore.isAuthenticated) {
         if (to.name === 'login') {
@@ -47,7 +45,6 @@ export default defineRouter(function ({ store /*, ssrContext */ }) {
         }
         return next()
       } else {
-        console.log('not really')
         if (to.name !== 'login') {
           return next({ name: 'login' })
         }
