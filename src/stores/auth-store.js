@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
       await getAuth()
       setIsAuthenticated(true)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

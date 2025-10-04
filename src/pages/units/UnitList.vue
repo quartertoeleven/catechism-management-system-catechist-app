@@ -3,36 +3,29 @@
     <q-list bordered padding class="rounded-borders">
       <q-item-label header>Lớp của tôi</q-item-label>
 
-      <q-item clickable v-ripple @click="navigateToUnitDetails('GL2025-VD1-A')">
+      <q-item clickable v-ripple @click="navigateToUnitDetails(myUnit.code)" v-if="myUnit">
         <q-item-section>
-          <q-item-label lines="1">Vào Đời 1A</q-item-label>
-          <q-item-label caption>GL2025-VD1-A</q-item-label>
+          <q-item-label lines="1">{{ myUnit.name }}</q-item-label>
+          <q-item-label caption>{{ myUnit.code }}</q-item-label>
         </q-item-section>
       </q-item>
 
       <q-separator spaced />
       <q-item-label header>Các lớp khác trong khối</q-item-label>
 
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label lines="">Vào Đời 1B</q-item-label>
-          <q-item-label caption>GL2025-VD1-B</q-item-label>
-        </q-item-section>
-      </q-item>
-
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label lines="">Vào Đời 1C</q-item-label>
-          <q-item-label caption>GL2025-VD1-C</q-item-label>
-        </q-item-section>
-      </q-item>
-
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label lines="">Vào Đời 1D</q-item-label>
-          <q-item-label caption>GL2025-VD1-D</q-item-label>
-        </q-item-section>
-      </q-item>
+      <template v-for="unit in unitList" :key="unit.code">
+        <q-item
+          v-if="unit.my_unit === false"
+          clickable
+          v-ripple
+          @click="navigateToUnitDetails(unit.code)"
+        >
+          <q-item-section>
+            <q-item-label lines="1">{{ unit.name }}</q-item-label>
+            <q-item-label caption>{{ unit.code }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
     </q-list>
   </div>
 </template>
@@ -40,11 +33,24 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useAppStore } from 'stores/app-store'
+import { useUnitStore } from 'stores/unit-store'
+import { onBeforeMount, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const appStore = useAppStore()
+const unitStore = useUnitStore()
+
+const myUnit = ref(null)
+
 const { setPageTitle } = appStore
-setPageTitle('Quản lý lớp')
+const { unitList } = storeToRefs(unitStore)
+
+onBeforeMount(async () => {
+  setPageTitle('Quản lý lớp')
+  await unitStore.getUnitList()
+  myUnit.value = unitList.value.find((unit) => unit.my_unit === true)
+})
 
 const navigateToUnitDetails = (unitCode) => {
   router.push(`/units/${unitCode}`)

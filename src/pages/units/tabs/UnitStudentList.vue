@@ -1,16 +1,20 @@
 <template>
   <div>
     <q-list>
-      <q-item v-for="contact in contacts" :key="contact.student_code" class="" clickable v-ripple>
+      <q-item
+        v-for="student in unitDetails.students"
+        :key="student.code"
+        class=""
+        clickable
+        v-ripple
+      >
         <q-item-section avatar>
-          <q-avatar color="primary" text-color="white">
-            {{ contact.letter }}
-          </q-avatar>
+          <q-avatar color="primary" text-color="white"> </q-avatar>
         </q-item-section>
 
         <q-item-section>
-          <q-item-label>{{ contact.name }}</q-item-label>
-          <q-item-label caption lines="1">{{ contact.student_code }}</q-item-label>
+          <q-item-label>{{ getStudentFullName(student) }}</q-item-label>
+          <q-item-label caption lines="1">{{ student.code }}</q-item-label>
         </q-item-section>
 
         <!-- <q-item-section side>
@@ -22,96 +26,21 @@
 </template>
 
 <script setup>
-const contacts = [
-  {
-    name: 'Phêrô Nguyễn Văn A',
-    student_code: 'GL2025-HS0001',
-    letter: 'A',
-  },
-  {
-    name: 'Gioan Baotixia Nguyễn Hoàng Hải Nam Phong',
-    student_code: 'GL2025-HS0002',
-    letter: 'P',
-  },
-  {
-    name: 'Maria Madalena Nguyễn Đào Thanh Kim Nhật',
-    student_code: 'GL2025-HS0003',
-    letter: 'N',
-  },
-  {
-    name: 'Phêrô Nguyễn Văn A',
-    student_code: 'GL2025-HS0001',
-    letter: 'A',
-  },
-  {
-    name: 'Gioan Baotixia Nguyễn Hoàng Hải Nam Phong',
-    student_code: 'GL2025-HS0002',
-    letter: 'P',
-  },
-  {
-    name: 'Maria Madalena Nguyễn Đào Thanh Kim Nhật',
-    student_code: 'GL2025-HS0003',
-    letter: 'N',
-  },
-  {
-    name: 'Phêrô Nguyễn Văn A',
-    student_code: 'GL2025-HS0001',
-    letter: 'A',
-  },
-  {
-    name: 'Gioan Baotixia Nguyễn Hoàng Hải Nam Phong',
-    student_code: 'GL2025-HS0002',
-    letter: 'P',
-  },
-  {
-    name: 'Maria Madalena Nguyễn Đào Thanh Kim Nhật',
-    student_code: 'GL2025-HS0003',
-    letter: 'N',
-  },
-  {
-    name: 'Phêrô Nguyễn Văn A',
-    student_code: 'GL2025-HS0001',
-    letter: 'A',
-  },
-  {
-    name: 'Gioan Baotixia Nguyễn Hoàng Hải Nam Phong',
-    student_code: 'GL2025-HS0002',
-    letter: 'P',
-  },
-  {
-    name: 'Maria Madalena Nguyễn Đào Thanh Kim Nhật',
-    student_code: 'GL2025-HS0003',
-    letter: 'N',
-  },
-  {
-    name: 'Phêrô Nguyễn Văn A',
-    student_code: 'GL2025-HS0001',
-    letter: 'A',
-  },
-  {
-    name: 'Gioan Baotixia Nguyễn Hoàng Hải Nam Phong',
-    student_code: 'GL2025-HS0002',
-    letter: 'P',
-  },
-  {
-    name: 'Maria Madalena Nguyễn Đào Thanh Kim Nhật',
-    student_code: 'GL2025-HS0003',
-    letter: 'N',
-  },
-  {
-    name: 'Phêrô Nguyễn Văn A',
-    student_code: 'GL2025-HS0001',
-    letter: 'A',
-  },
-  {
-    name: 'Gioan Baotixia Nguyễn Hoàng Hải Nam Phong',
-    student_code: 'GL2025-HS0002',
-    letter: 'P',
-  },
-  {
-    name: 'Maria Madalena Nguyễn Đào Thanh Kim Nhật',
-    student_code: 'GL2025-HS0003',
-    letter: 'N',
-  },
-]
+import { useUnitStore } from 'src/stores/unit-store'
+import { storeToRefs } from 'pinia'
+
+const unitStore = useUnitStore()
+
+const { unitDetails } = storeToRefs(unitStore)
+
+const getStudentFullName = (student) => {
+  const nameSegments = [
+    student.saint_name,
+    student.last_name,
+    student.middle_name,
+    student.first_name,
+  ]
+  const fullNameWithoutEmptySegment = nameSegments.filter((segment) => !!segment)
+  return fullNameWithoutEmptySegment.join(' ')
+}
 </script>

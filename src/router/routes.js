@@ -10,7 +10,7 @@ const routes = [
         component: () => import('pages/units/UnitList.vue'),
       },
       {
-        path: 'units/:id',
+        path: 'units/:unit_code',
         component: () => import('pages/units/UnitDetails.vue'),
         children: [
           { path: '', component: () => import('pages/units/tabs/UnitInfo.vue') },
