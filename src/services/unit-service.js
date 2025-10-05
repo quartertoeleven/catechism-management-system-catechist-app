@@ -7,3 +7,7 @@ export const getUnits = (study_year_code = null) => {
 export const getUnitDetails = (unit_code) => {
   return api.get(`/units/${unit_code}`)
 }
+
+export const getUnitSchedules = (unit_code) => {
+    return api.get(`/units/${unit_code}/schedules`)
+}
