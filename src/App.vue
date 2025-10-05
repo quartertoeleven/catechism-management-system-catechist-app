@@ -31,12 +31,12 @@ onMounted(() => {
 })
 
 const installApp = () => {
-  showInstallBanner.value = false
   deferredPrompt.prompt()
   // Wait for the user to respond to the prompt
   deferredPrompt.userChoice.then((choiceResult) => {
     if (choiceResult.outcome === 'accepted') {
       console.log('User accepted the A2HS prompt')
+      showInstallBanner.value = false
     } else {
       console.log('User dismissed the A2HS prompt')
     }
