@@ -9,5 +9,11 @@ export const getUnitDetails = (unit_code) => {
 }
 
 export const getUnitSchedules = (unit_code) => {
-    return api.get(`/units/${unit_code}/schedules`)
+  return api.get(`/units/${unit_code}/schedules`)
+}
+
+export const getUnitAttendancesForSchedule = (unit_code, schedule_id, type) => {
+  return api.get(`/units/${unit_code}/attendances`, {
+    params: { schedule_id: schedule_id, type: type },
+  })
 }

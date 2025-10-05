@@ -2,53 +2,117 @@
   <div>
     <div class="q-pa-md">
       <div class="q-gutter-md">
-        <q-select outlined dense v-model="selectedDateOption" :options="dateOptions" label="Ngày điểm danh"
-          @update:model-value="onDateOptionChange" />
-        <q-select outlined dense v-model="selectedTypeOption" :options="attendanceTypeOptions" label="Loại điểm danh"
-          :disable="!selectedDateOption" />
+        <q-select
+          outlined
+          dense
+          v-model="selectedDateOption"
+          :options="dateOptions"
+          label="Ngày điểm danh"
+          @update:model-value="onDateOptionChange"
+        />
+        <q-select
+          outlined
+          dense
+          v-model="selectedTypeOption"
+          :options="attendanceTypeOptions"
+          label="Loại điểm danh"
+          :disable="!selectedDateOption"
+          @update:model-value="onTypeOptionChange"
+        />
       </div>
     </div>
 
     <q-separator inset />
 
-    <div class="q-mx-md q-mb-md">
+    <div
+      class="q-mx-md q-mb-md"
+      v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
+    >
       <div class="text-center bg-primary">
         <div class="q-mt-md q-pt-md text-weight-bold text-white">ĐIỂM DANH THEO DANH SÁCH LỚP</div>
-        <q-carousel v-model="slide" transition-prev="slide-right" transition-next="slide-left" swipeable animated
-          control-color="white" padding arrows height="20rem" class="bg-primary text-white">
-          <q-carousel-slide v-for="n in 30" :key="n" :name="`slide-${n}`" class="column no-wrap flex-center">
+        <q-carousel
+          v-model="slide"
+          transition-prev="slide-right"
+          transition-next="slide-left"
+          swipeable
+          animated
+          control-color="white"
+          padding
+          arrows
+          height="20rem"
+          class="bg-primary text-white"
+        >
+          <q-carousel-slide
+            v-for="attendanceEntry in unitAttendancesForSchedule"
+            :key="attendanceEntry.student.code"
+            :name="`student-${attendanceEntry.student.code}`"
+            class="column no-wrap flex-center"
+          >
             <div class="q-mt-md text-center">
-              <div>Maria Gorreti</div>
-              <div class="text-h5 text-weight-bold">Nguyễn Đào Thanh Kim Nhật</div>
-              <div class="text-subtitle2">GL2025-HS0001</div>
+              <div>{{ attendanceEntry.student.saint_name }}</div>
+              <div class="text-h5 text-weight-bold">
+                {{ getStudentFullName(attendanceEntry.student) }}
+              </div>
+              <div class="text-subtitle2">{{ attendanceEntry.student.code }}</div>
             </div>
             <div class="q-mt-md q-gutter-md full-width">
-              <q-btn-toggle v-model="attendanceStatus" spread no-caps :options="attendanceOptions"
-                :toggle-color="attendanceStatus === 'present' ? 'positive' : 'negative'" color="white"
-                text-color="primary" />
+              <q-btn-toggle
+                v-model="attendanceEntry.status"
+                spread
+                no-caps
+                :options="attendanceOptions"
+                :toggle-color="attendanceEntry.status === 'present' ? 'positive' : 'negative'"
+                color="white"
+                text-color="primary"
+                @update:model-value="updateAttendance(attendanceEntry)"
+              />
             </div>
-            <div class="q-mt-md flex" v-if="attendanceStatus === 'absence'">
-              <q-checkbox v-model="isNotifiedAbsence" label="Vắng có phép" color="negative" dark />
+            <div class="q-mt-md flex" v-if="attendanceEntry.status === 'absent'">
+              <q-checkbox
+                v-model="attendanceEntry.is_notified_absence"
+                label="Vắng có phép"
+                color="negative"
+                dark
+                @update:model-value="updateAttendance(attendanceEntry)"
+              />
             </div>
           </q-carousel-slide>
         </q-carousel>
       </div>
     </div>
 
-    <q-separator inset />
+    <q-separator inset v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0" />
 
-    <div class="q-mt-md q-mx-md">
+    <div
+      class="q-mt-md q-mx-md"
+      v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
+    >
       <q-btn class="full-width" color="primary" icon="qr_code" label="Điểm danh sử dụng QR" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUnitStore } from 'stores/unit-store'
 import { useRouter } from 'vue-router'
-import { date } from 'quasar'
+import { date, useQuasar } from 'quasar'
+
+const attendanceOptions = [
+  {
+    label: 'Hiện diện',
+    value: 'present',
+  },
+  {
+    label: 'Vắng',
+    value: 'absent',
+  },
+]
+
+const $q = useQuasar()
+
+const slide = ref(null)
 
 const router = useRouter()
 const unitStore = useUnitStore()
@@ -57,20 +121,28 @@ const dateOptions = ref([])
 const attendanceTypeOptions = ref([])
 const selectedDateOption = ref(null)
 const selectedTypeOption = ref(null)
+const unitAttendancesForSchedule = ref([])
 
 const { unitSchedules } = storeToRefs(unitStore)
+
+onBeforeMount(async () => {
+  $q.loading.show()
+  await unitStore.fetchUnitSchedules(router.currentRoute.value.params.unit_code)
+  populateUnitScheduleOptions()
+  $q.loading.hide()
+})
 
 const populateUnitScheduleOptions = () => {
   const populatedDateOptions = unitSchedules.value.map((schedule) => {
     const option = {
       label: date.formatDate(schedule.date, 'DD/MM/YYYY'),
-      value: schedule.date,
+      value: schedule.id,
       raw_data: {
         is_lesson_check: schedule.is_lesson_attendance_check,
         is_mass_check: schedule.is_mass_attendance_check,
         lesson_content: schedule.lesson_content,
         mass_content: schedule.mass_content,
-      }
+      },
     }
     return option
   })
@@ -78,11 +150,20 @@ const populateUnitScheduleOptions = () => {
 }
 
 const onDateOptionChange = () => {
+  selectedTypeOption.value = null
+  unitAttendancesForSchedule.value = null
   populateAttendanceTypeOptions()
 }
 
+const onTypeOptionChange = () => {
+  if (selectedTypeOption.value) {
+    populateAttendanceEntry()
+  }
+}
+
 const populateAttendanceTypeOptions = () => {
-  let massOption, lessonOption = null
+  let massOption,
+    lessonOption = null
   const availableOptions = []
 
   if (selectedDateOption.value.raw_data.is_mass_check) {
@@ -103,49 +184,33 @@ const populateAttendanceTypeOptions = () => {
   attendanceTypeOptions.value = availableOptions
 }
 
-onMounted(async () => {
-  await unitStore.fetchUnitSchedules(router.currentRoute.value.params.unit_code)
-  populateUnitScheduleOptions()
-})
+const populateAttendanceEntry = async () => {
+  $q.loading.show()
+  const result = await unitStore.fetchUnitAttendancesForSchedule(
+    router.currentRoute.value.params.unit_code,
+    selectedDateOption.value.value,
+    selectedTypeOption.value.value,
+  )
+  unitAttendancesForSchedule.value = result
+  slide.value = `student-${result[0].student.code}`
+  $q.loading.hide()
+}
 
-// const attendanceDateOptions = [
-//   {
-//     label: '21/09/2025',
-//     value: '2025-09-21',
-//   },
-//   {
-//     label: '28/09/2025',
-//     value: '2025-09-28',
-//   },
-//   {
-//     label: '05/10/2025',
-//     value: '2025-10-05',
-//   },
-// ]
+const getStudentFullName = (student) => {
+  const nameSegments = [student.last_name, student.middle_name, student.first_name]
+  const fullNameWithoutEmptySegment = nameSegments.filter((segment) => !!segment)
+  return fullNameWithoutEmptySegment.join(' ')
+}
 
-// const attendanceTypeOptions = [
-//   {
-//     label: 'Thánh lễ',
-//     value: 'mass',
-//   },
-//   {
-//     label: 'Giáo lý',
-//     value: 'lesson',
-//   },
-// ]
-
-const attendanceOptions = [
-  {
-    label: 'Hiện diện',
-    value: 'present',
-  },
-  {
-    label: 'Vắng',
-    value: 'absence',
-  },
-]
-
-const slide = ref('slide-1')
-const attendanceStatus = ref('absence')
-const isNotifiedAbsence = ref(false)
+const updateAttendance = async (attendanceEntry) => {
+  $q.loading.show()
+  await unitStore.updateAttendanceStatus(
+    attendanceEntry.grade_schedule_id,
+    selectedTypeOption.value.value,
+    attendanceEntry.student.code,
+    attendanceEntry.status,
+    attendanceEntry.is_notified_absence,
+  )
+  $q.loading.hide()
+}
 </script>

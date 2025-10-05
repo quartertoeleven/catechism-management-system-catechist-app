@@ -1,6 +1,13 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { getUnits, getUnitDetails, getUnitSchedules } from '../services/unit-service'
+import {
+  getUnits,
+  getUnitDetails,
+  getUnitSchedules,
+  getUnitAttendancesForSchedule,
+} from '../services/unit-service'
+
+import { doAttendanceCheck } from '../services/attendance-service'
 
 export const useUnitStore = defineStore('unit', () => {
   const unitList = ref([])
@@ -22,6 +29,28 @@ export const useUnitStore = defineStore('unit', () => {
     unitSchedules.value = result.data.data
   }
 
+  const fetchUnitAttendancesForSchedule = async (unitCode, scheduleId, type) => {
+    const result = await getUnitAttendancesForSchedule(unitCode, scheduleId, type)
+    return result.data.data
+  }
+
+  const updateAttendanceStatus = async (
+    gradeScheduleId,
+    type,
+    studentCode,
+    status,
+    isNotifiedAbsence,
+  ) => {
+    const attendanceData = {
+      student_code: studentCode,
+      type: type,
+      status: status,
+      is_notified_absence: isNotifiedAbsence,
+    }
+
+    await doAttendanceCheck(gradeScheduleId, attendanceData)
+  }
+
   const resetUnitDetails = () => {
     unitDetails.value = {}
   }
@@ -33,6 +62,8 @@ export const useUnitStore = defineStore('unit', () => {
     resetUnitDetails,
     getSpecificUnitDetails,
     unitSchedules,
-    fetchUnitSchedules
+    fetchUnitSchedules,
+    fetchUnitAttendancesForSchedule,
+    updateAttendanceStatus,
   }
 })
