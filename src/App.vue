@@ -11,18 +11,21 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 
+const router = useRouter()
 const showInstallBanner = ref(false)
 let deferredPrompt
 
 onMounted(() => {
+  if (router.currentRoute.value.name !== 'login') {
+    return
+  }
   // handle PWA install promt
-
   window.addEventListener('beforeinstallprompt', (e) => {
     // Prevent Chrome 67 and earlier from automatically showing the prompt
     e.preventDefault()
-    console.log('jajajajajjajjajaj')
     // Stash the event so it can be triggered later.
     deferredPrompt = e
     // Show the install prompt

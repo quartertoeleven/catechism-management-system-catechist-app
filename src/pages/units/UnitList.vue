@@ -57,6 +57,6 @@ onBeforeMount(async () => {
 })
 
 const navigateToUnitDetails = (unitCode) => {
-  router.push(`/units/${unitCode}`)
+  router.push(`/units/${unitCode}/students`)
 }
 </script>

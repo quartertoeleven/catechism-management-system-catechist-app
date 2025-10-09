@@ -4,7 +4,7 @@
   </q-page-container>
 
   <q-tabs class="bg-primary text-white shadow-2 fixed-bottom" style="z-index: 1">
-    <q-route-tab :to="`/units/${unitDetails.code}`" icon="info" label="Thông tin" />
+    <!-- <q-route-tab :to="`/units/${unitDetails.code}`" icon="info" label="Thông tin" /> -->
     <q-route-tab :to="`/units/${unitDetails.code}/students`" icon="list" label="Học viên" />
     <q-route-tab
       :to="`/units/${unitDetails.code}/attendance-check`"

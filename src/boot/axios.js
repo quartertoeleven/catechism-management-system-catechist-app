@@ -11,7 +11,7 @@ import { useAuthStore } from 'src/stores/auth-store'
 // for each client)
 const api = axios.create({ baseURL: 'http://localhost:5000/api', withCredentials: true })
 
-export default defineBoot(({ app, store }) => {
+export default defineBoot(({ app, store, router }) => {
   const authStore = useAuthStore(store)
 
   api.interceptors.response.use(
@@ -19,15 +19,20 @@ export default defineBoot(({ app, store }) => {
     (error) => {
       if (error.response.status === 401) {
         authStore.isAuthenticated = false
+        if (!router.currentRoute.value.name) {
+          return Promise.reject(error)
+        }
       }
-      Notify.create({
-        type: 'negative',
-        message: error.response.data.message,
-        position: 'top-right',
-        group: false,
-        timeout: 4000,
-        progress: true,
-      })
+      if (router.currentRoute.value.name) {
+        Notify.create({
+          type: 'negative',
+          message: error.response.data.message,
+          position: 'top-right',
+          group: false,
+          timeout: 4000,
+          progress: true,
+        })
+      }
       return Promise.reject(error)
     },
   )
