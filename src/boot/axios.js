@@ -9,7 +9,7 @@ import { useAuthStore } from 'src/stores/auth-store'
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: 'http://localhost:5000/api', withCredentials: true })
+const api = axios.create({ baseURL: process.env.API_BASE_URL, withCredentials: true })
 
 export default defineBoot(({ app, store, router }) => {
   const authStore = useAuthStore(store)

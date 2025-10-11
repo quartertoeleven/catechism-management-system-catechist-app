@@ -1,9 +1,12 @@
 <template>
-  <div class="q-pa-md q-gutter-sm" v-if="showInstallBanner">
-    <q-banner position="bottom" inline-actions rounded class="bg-primary text-white">
+  <div
+    class="q-pa-md q-gutter-sm"
+    v-if="showInstallBanner & (router.currentRoute.value.name === 'login')"
+  >
+    <q-banner inline-actions rounded class="bg-primary text-white">
       Ấn vào nút bên cạnh để cài đặt ứng dụng
       <template v-slot:action>
-        <q-btn flat label="Cài đặt" @click="installApp" />
+        <q-btn flat label="Cài đặt" @click="installApp" style="z-index: 1" />
       </template>
     </q-banner>
   </div>
@@ -19,9 +22,6 @@ const showInstallBanner = ref(false)
 let deferredPrompt
 
 onMounted(() => {
-  if (router.currentRoute.value.name !== 'login') {
-    return
-  }
   // handle PWA install promt
   window.addEventListener('beforeinstallprompt', (e) => {
     // Prevent Chrome 67 and earlier from automatically showing the prompt
