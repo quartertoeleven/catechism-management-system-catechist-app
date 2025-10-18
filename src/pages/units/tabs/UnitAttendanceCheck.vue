@@ -1,30 +1,98 @@
 <template>
   <div>
     <div class="q-pa-md">
-      <div class="q-gutter-md">
-        <q-select
-          outlined
-          dense
-          v-model="selectedDateOption"
-          :options="dateOptions"
-          label="Ngày điểm danh"
-          @update:model-value="onDateOptionChange"
-        />
-        <q-select
-          outlined
-          dense
-          v-model="selectedTypeOption"
-          :options="attendanceTypeOptions"
-          label="Loại điểm danh"
-          :disable="!selectedDateOption"
-          @update:model-value="onTypeOptionChange"
-        />
-      </div>
+      <q-expansion-item
+        v-model="expanded"
+        icon="calendar_today"
+        :label="selectedTypeOption?.label || '(chưa chọn)'"
+        :caption="selectedDateOption?.label || '(chưa chọn)'"
+      >
+        <div class="q-pt-md">
+          <div class="q-gutter-md">
+            <q-select
+              outlined
+              dense
+              v-model="selectedDateOption"
+              :options="dateOptions"
+              label="Ngày điểm danh"
+              @update:model-value="onDateOptionChange"
+            />
+            <q-select
+              outlined
+              dense
+              v-model="selectedTypeOption"
+              :options="attendanceTypeOptions"
+              label="Loại điểm danh"
+              :disable="!selectedDateOption"
+              @update:model-value="onTypeOptionChange"
+            />
+          </div>
+        </div>
+      </q-expansion-item>
     </div>
 
     <q-separator inset />
 
-    <div
+    <div class="q-pa-md" v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0">
+      <q-list bordered separator>
+        <q-item
+          v-for="attendanceEntry in unitAttendancesForSchedule"
+          :key="attendanceEntry.student.code"
+        >
+          <q-item-section>
+            <div class="row no-wrap justify-start">
+              <div class="col">
+                <q-item-label caption>{{ attendanceEntry.student.saint_name }}</q-item-label>
+                <q-item-label> {{ getStudentFullName(attendanceEntry.student) }}</q-item-label>
+              </div>
+              <q-item-label caption>{{ attendanceEntry.student.code }}</q-item-label>
+            </div>
+
+            <div class="row q-pt-sm">
+              <div class="col text-center">
+                <!-- <q-btn-toggle
+                  v-model="attendanceEntry.status"
+                  spreadpresent
+                  unelevated
+                  no-caps
+                  toggle-color="negative"
+                  outline
+                  color="primary"
+                  text-color="white"
+                  :options="attendanceOptions"
+                  @update:model-value="updateAttendance(attendanceEntry)"
+                /> -->
+                <q-radio
+                  v-for="attendanceOption in attendanceOptions"
+                  :key="attendanceOption.value"
+                  :val="attendanceOption.value"
+                  v-model="attendanceEntry.status"
+                  keep-color
+                  :label="attendanceOption.label"
+                  :color="attendanceOption.color"
+                  @update:model-value="updateAttendance(attendanceEntry)"
+                />
+              </div>
+            </div>
+          </q-item-section>
+          <!-- <q-item-section>
+            <q-item-label caption>{{ attendanceEntry.student.saint_name }}</q-item-label>
+            <q-item-label> {{ getStudentFullName(attendanceEntry.student) }}</q-item-label>
+          </q-item-section>
+          <q-item-section side top>
+            <q-item-label<q-page-sticky position="bottom-right" :offset="[18, 18]">
+            <q-btn fab icon="add" color="accent" />
+          </q-page-sticky> caption>{{ attendanceEntry.student.code }}</q-item-label>
+          </q-item-section> -->
+        </q-item>
+      </q-list>
+    </div>
+
+    <q-page-sticky position="bottom-right" :offset="[30, 100]">
+      <q-btn fab icon="arrow_upward" color="primary" @click="scrollToTop" />
+    </q-page-sticky>
+
+    <!-- <div
       class="q-mx-md q-mb-md"
       v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
     >
@@ -61,7 +129,6 @@
                 spread
                 no-caps
                 :options="attendanceOptions"
-                :toggle-color="attendanceEntry.status === 'present' ? 'positive' : 'negative'"
                 color="white"
                 text-color="primary"
                 @update:model-value="updateAttendance(attendanceEntry)"
@@ -79,16 +146,16 @@
           </q-carousel-slide>
         </q-carousel>
       </div>
-    </div>
+    </div> -->
 
-    <q-separator inset v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0" />
+    <!-- <q-separator inset v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0" /> -->
 
-    <div
+    <!-- <div
       class="q-mt-md q-mx-md"
       v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
     >
       <q-btn class="full-width" color="primary" icon="qr_code" label="Điểm danh sử dụng QR" />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -103,16 +170,24 @@ const attendanceOptions = [
   {
     label: 'Hiện diện',
     value: 'present',
+    color: 'positive',
+  },
+  {
+    label: 'Vắng có phép',
+    value: 'leave',
+    color: 'warning',
   },
   {
     label: 'Vắng',
     value: 'absent',
+    color: 'negative',
   },
 ]
 
 const $q = useQuasar()
 
 const slide = ref(null)
+const expanded = ref(true)
 
 const router = useRouter()
 const unitStore = useUnitStore()
@@ -161,6 +236,13 @@ const onTypeOptionChange = () => {
   }
 }
 
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
+}
+
 const populateAttendanceTypeOptions = () => {
   let massOption,
     lessonOption = null
@@ -193,6 +275,7 @@ const populateAttendanceEntry = async () => {
   )
   unitAttendancesForSchedule.value = result
   slide.value = `student-${result[0].student.code}`
+  expanded.value = false
   $q.loading.hide()
 }
 
