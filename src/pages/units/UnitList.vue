@@ -34,11 +34,9 @@
 import { useRouter } from 'vue-router'
 import { useAppStore } from 'stores/app-store'
 import { useUnitStore } from 'stores/unit-store'
-import { onBeforeMount, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useQuasar } from 'quasar'
 
-const $q = useQuasar()
 const router = useRouter()
 const appStore = useAppStore()
 const unitStore = useUnitStore()
@@ -48,12 +46,10 @@ const myUnit = ref(null)
 const { setPageTitle } = appStore
 const { unitList } = storeToRefs(unitStore)
 
-onBeforeMount(async () => {
-  $q.loading.show()
+onMounted(async () => {
   setPageTitle('Quản lý lớp')
   await unitStore.getUnitList()
   myUnit.value = unitList.value.find((unit) => unit.my_unit === true)
-  $q.loading.hide()
 })
 
 const navigateToUnitDetails = (unitCode) => {

@@ -6,7 +6,9 @@
 
         <q-toolbar-title> {{ pageTitle }} </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          Phiên bản <span class="text-weight-bold">{{ appVersion }}</span>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -31,7 +33,7 @@ import { useAppStore } from 'stores/app-store'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
-const { pageTitle } = storeToRefs(appStore)
+const { pageTitle, appVersion } = storeToRefs(appStore)
 
 const linksList = [
   {

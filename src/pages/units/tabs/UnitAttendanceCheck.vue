@@ -164,7 +164,7 @@ import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUnitStore } from 'stores/unit-store'
 import { useRouter } from 'vue-router'
-import { date, useQuasar } from 'quasar'
+import { date } from 'quasar'
 
 const attendanceOptions = [
   {
@@ -184,8 +184,6 @@ const attendanceOptions = [
   },
 ]
 
-const $q = useQuasar()
-
 const slide = ref(null)
 const expanded = ref(true)
 
@@ -201,10 +199,8 @@ const unitAttendancesForSchedule = ref([])
 const { unitSchedules } = storeToRefs(unitStore)
 
 onBeforeMount(async () => {
-  $q.loading.show()
   await unitStore.fetchUnitSchedules(router.currentRoute.value.params.unit_code)
   populateUnitScheduleOptions()
-  $q.loading.hide()
 })
 
 const populateUnitScheduleOptions = () => {
@@ -267,7 +263,6 @@ const populateAttendanceTypeOptions = () => {
 }
 
 const populateAttendanceEntry = async () => {
-  $q.loading.show()
   const result = await unitStore.fetchUnitAttendancesForSchedule(
     router.currentRoute.value.params.unit_code,
     selectedDateOption.value.value,
@@ -276,7 +271,6 @@ const populateAttendanceEntry = async () => {
   unitAttendancesForSchedule.value = result
   slide.value = `student-${result[0].student.code}`
   expanded.value = false
-  $q.loading.hide()
 }
 
 const getStudentFullName = (student) => {
@@ -286,7 +280,6 @@ const getStudentFullName = (student) => {
 }
 
 const updateAttendance = async (attendanceEntry) => {
-  $q.loading.show()
   await unitStore.updateAttendanceStatus(
     attendanceEntry.grade_schedule_id,
     selectedTypeOption.value.value,
@@ -294,6 +287,5 @@ const updateAttendance = async (attendanceEntry) => {
     attendanceEntry.status,
     attendanceEntry.is_notified_absence,
   )
-  $q.loading.hide()
 }
 </script>

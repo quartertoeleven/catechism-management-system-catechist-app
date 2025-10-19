@@ -1,5 +1,5 @@
 import { defineBoot } from '#q-app/wrappers'
-import { Notify } from 'quasar'
+import { Notify, Loading } from 'quasar'
 import axios from 'axios'
 import { useAuthStore } from 'src/stores/auth-store'
 
@@ -14,9 +14,36 @@ const api = axios.create({ baseURL: process.env.API_BASE_URL, withCredentials: t
 export default defineBoot(({ app, store, router }) => {
   const authStore = useAuthStore(store)
 
-  api.interceptors.response.use(
-    (response) => response,
+  api.interceptors.request.use(
+    (config) => {
+      Loading.show()
+      return config
+    },
     (error) => {
+      Loading.hide()
+      return Promise.reject(error)
+    },
+  )
+
+  api.interceptors.response.use(
+    (response) => {
+      console.log(app)
+      Loading.hide()
+      return response
+    },
+    (error) => {
+      Loading.hide()
+      if (error.code === 'ERR_NETWORK') {
+        Notify.create({
+          type: 'negative',
+          message: 'Internal server error',
+          position: 'top-right',
+          group: false,
+          timeout: 4000,
+          progress: true,
+        })
+        return Promise.reject(error)
+      }
       if (error.response.status === 401) {
         authStore.isAuthenticated = false
         if (!router.currentRoute.value.name) {
@@ -26,7 +53,7 @@ export default defineBoot(({ app, store, router }) => {
       if (router.currentRoute.value.name) {
         Notify.create({
           type: 'negative',
-          message: error.response.data.message,
+          message: error.response?.data.message || 'Internal server error',
           position: 'top-right',
           group: false,
           timeout: 4000,

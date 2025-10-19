@@ -26,7 +26,9 @@
     </div>
     <div class="q-mt-xl full-width text-center text-caption">
       <div>Phát triển bởi <span class="text-weight-bold">Quarter To Eleven</span></div>
-      <sub>Phiên bản: 0.0.1</sub>
+      <sub
+        >Phiên bản <span class="text-weight-bold">{{ appVersion }}</span></sub
+      >
     </div>
   </div>
 </template>
@@ -34,10 +36,15 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from 'src/stores/auth-store'
+import { useAppStore } from 'src/stores/app-store'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const appStore = useAppStore()
+
+const { appVersion } = storeToRefs(appStore)
 const { login } = authStore
 
 const loginFormData = ref({

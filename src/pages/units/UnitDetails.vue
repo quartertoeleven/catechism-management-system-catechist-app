@@ -19,10 +19,8 @@ import { useRouter } from 'vue-router'
 import { useAppStore } from 'stores/app-store'
 import { useUnitStore } from 'src/stores/unit-store'
 import { storeToRefs } from 'pinia'
-import { onBeforeMount } from 'vue'
-import { useQuasar } from 'quasar'
+import { onMounted } from 'vue'
 
-const $q = useQuasar()
 const router = useRouter()
 const appStore = useAppStore()
 const unitStore = useUnitStore()
@@ -31,11 +29,9 @@ const { unitDetails } = storeToRefs(unitStore)
 const { setPageTitle } = appStore
 const { resetUnitDetails } = unitStore
 
-onBeforeMount(async () => {
-  $q.loading.show()
+onMounted(async () => {
   resetUnitDetails()
   await unitStore.getSpecificUnitDetails(router.currentRoute.value.params.unit_code)
   setPageTitle(unitDetails.value.name)
-  $q.loading.hide()
 })
 </script>
