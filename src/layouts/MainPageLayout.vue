@@ -43,59 +43,7 @@
     </q-header>
 
     <q-page-container class="bg-grey-1 text-grey-9">
-      <!-- <router-view /> -->
-      <div class="q-pa-md">
-        <q-list>
-          <q-expansion-item
-            expand-separator
-            icon="mdi-account-settings"
-            label="Account settings"
-            caption="John Doe"
-            expand-icon="mdi-menu-down"
-            default-opened
-          >
-            <template v-slot:header>
-              <q-item-section class="q-pl-sm">
-                <q-item-label class="text-weight-medium">LỚP GIÁO LÝ</q-item-label>
-                <q-item-label caption lines="1">{{ currentUser.current_unit?.name }}</q-item-label>
-              </q-item-section>
-            </template>
-
-            <q-card class="my-card bg-grey-1">
-              <div class="q-pa-none">
-                <div class="row">
-                  <div class="col-3">
-                    <q-btn flat stack class="full-width q-pa-md" no-caps>
-                      <q-icon
-                        name="mdi-list-box"
-                        size="xl"
-                        class="q-pb-md"
-                        @click="
-                          navigateTo(`/units/${currentUser.current_unit?.code}/attendance-check`)
-                        "
-                      />
-                      <div class="text-subtitle2 text-weight-regular">Danh sách</div>
-                    </q-btn>
-                  </div>
-                  <div class="col-3">
-                    <q-btn flat stack class="full-width q-pa-md" no-caps>
-                      <q-icon
-                        name="mdi-check-circle-outline"
-                        size="xl"
-                        class="q-pb-md"
-                        @click="
-                          navigateTo(`/units/${currentUser.current_unit?.code}/attendance-check`)
-                        "
-                      />
-                      <div class="text-subtitle2 text-weight-regular">Điểm danh</div>
-                    </q-btn>
-                  </div>
-                </div>
-              </div>
-            </q-card>
-          </q-expansion-item>
-        </q-list>
-      </div>
+      <router-view />
     </q-page-container>
 
     <q-footer class="bg-grey-1 text-grey-9">
@@ -112,77 +60,18 @@
 </template>
 
 <script setup>
-// import { ref } from 'vue'
-// import EssentialLink from 'components/EssentialLink.vue'
 import { useAppStore } from 'stores/app-store'
 import { useAuthStore } from 'stores/auth-store'
 import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
 
 const appStore = useAppStore()
 const authStore = useAuthStore()
 const { appVersion } = storeToRefs(appStore)
 const { currentUser } = authStore
-const router = useRouter()
 
 const getFullName = (catechist) => {
   const nameSegments = [catechist.last_name, catechist.middle_name, catechist.first_name]
   const fullNameWithoutEmptySegment = nameSegments.filter((segment) => !!segment)
   return fullNameWithoutEmptySegment.join(' ')
 }
-
-// const linksList = [
-//   {
-//     title: 'Danh sách lớp',
-//     caption: 'Danh sách lớp',
-//     icon: 'school',
-//     link: '/units',
-//   },
-//   // {
-//   //   title: 'Github',
-//   //   caption: 'github.com/quasarframework',
-//   //   icon: 'code',
-//   //   link: 'https://github.com/quasarframework',
-//   // },
-//   // {
-//   //   title: 'Discord Chat Channel',
-//   //   caption: 'chat.quasar.dev',
-//   //   icon: 'chat',
-//   //   link: 'https://chat.quasar.dev',
-//   // },
-//   // {
-//   //   title: 'Forum',
-//   //   caption: 'forum.quasar.dev',
-//   //   icon: 'record_voice_over',
-//   //   link: 'https://forum.quasar.dev',
-//   // },
-//   // {
-//   //   title: 'Twitter',
-//   //   caption: '@quasarframework',
-//   //   icon: 'rss_feed',
-//   //   link: 'https://twitter.quasar.dev',
-//   // },
-//   // {
-//   //   title: 'Facebook',
-//   //   caption: '@QuasarFramework',
-//   //   icon: 'public',
-//   //   link: 'https://facebook.quasar.dev',
-//   // },
-//   // {
-//   //   title: 'Quasar Awesome',
-//   //   caption: 'Community Quasar projects',
-//   //   icon: 'favorite',
-//   //   link: 'https://awesome.quasar.dev',
-//   // },
-// ]
-
-const navigateTo = (path) => {
-  router.push(path)
-}
-
-// const leftDrawerOpen = ref(false)
-
-// function toggleLeftDrawer() {
-//   leftDrawerOpen.value = !leftDrawerOpen.value
-// }
 </script>

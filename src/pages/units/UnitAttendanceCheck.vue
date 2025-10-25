@@ -3,9 +3,10 @@
     <div class="q-pa-md">
       <q-expansion-item
         v-model="expanded"
-        icon="calendar_today"
+        icon="mdi-calendar-blank"
         :label="selectedTypeOption?.label || '(chưa chọn)'"
         :caption="selectedDateOption?.label || '(chưa chọn)'"
+        expand-icon="mdi-chevron-down"
       >
         <div class="q-pt-md">
           <div class="q-gutter-md">
@@ -16,6 +17,7 @@
               :options="dateOptions"
               label="Ngày điểm danh"
               @update:model-value="onDateOptionChange"
+              dropdown-icon="mdi-menu-down"
             />
             <q-select
               outlined
@@ -25,6 +27,7 @@
               label="Loại điểm danh"
               :disable="!selectedDateOption"
               @update:model-value="onTypeOptionChange"
+              dropdown-icon="mdi-menu-down"
             />
           </div>
         </div>
@@ -33,7 +36,10 @@
 
     <q-separator inset />
 
-    <div class="q-pa-md" v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0">
+    <div
+      class="q-pa-md q-mb-xl"
+      v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
+    >
       <q-list bordered separator>
         <q-item
           v-for="attendanceEntry in unitAttendancesForSchedule"
@@ -50,18 +56,6 @@
 
             <div class="row q-pt-sm">
               <div class="col text-center">
-                <!-- <q-btn-toggle
-                  v-model="attendanceEntry.status"
-                  spreadpresent
-                  unelevated
-                  no-caps
-                  toggle-color="negative"
-                  outline
-                  color="primary"
-                  text-color="white"
-                  :options="attendanceOptions"
-                  @update:model-value="updateAttendance(attendanceEntry)"
-                /> -->
                 <q-radio
                   v-for="attendanceOption in attendanceOptions"
                   :key="attendanceOption.value"
@@ -75,94 +69,21 @@
               </div>
             </div>
           </q-item-section>
-          <!-- <q-item-section>
-            <q-item-label caption>{{ attendanceEntry.student.saint_name }}</q-item-label>
-            <q-item-label> {{ getStudentFullName(attendanceEntry.student) }}</q-item-label>
-          </q-item-section>
-          <q-item-section side top>
-            <q-item-label<q-page-sticky position="bottom-right" :offset="[18, 18]">
-            <q-btn fab icon="add" color="accent" />
-          </q-page-sticky> caption>{{ attendanceEntry.student.code }}</q-item-label>
-          </q-item-section> -->
         </q-item>
       </q-list>
     </div>
 
-    <q-page-sticky position="bottom-right" :offset="[30, 100]">
-      <q-btn fab icon="arrow_upward" color="primary" @click="scrollToTop" />
+    <q-page-sticky position="bottom-right" :offset="[30, 30]">
+      <q-btn fab icon="mdi-arrow-up" color="primary" @click="scrollToTop" />
     </q-page-sticky>
-
-    <!-- <div
-      class="q-mx-md q-mb-md"
-      v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
-    >
-      <div class="text-center bg-primary">
-        <div class="q-mt-md q-pt-md text-weight-bold text-white">ĐIỂM DANH THEO DANH SÁCH LỚP</div>
-        <q-carousel
-          v-model="slide"
-          transition-prev="slide-right"
-          transition-next="slide-left"
-          swipeable
-          animated
-          control-color="white"
-          padding
-          arrows
-          height="20rem"
-          class="bg-primary text-white"
-        >
-          <q-carousel-slide
-            v-for="attendanceEntry in unitAttendancesForSchedule"
-            :key="attendanceEntry.student.code"
-            :name="`student-${attendanceEntry.student.code}`"
-            class="column no-wrap flex-center"
-          >
-            <div class="q-mt-md text-center">
-              <div>{{ attendanceEntry.student.saint_name }}</div>
-              <div class="text-h5 text-weight-bold">
-                {{ getStudentFullName(attendanceEntry.student) }}
-              </div>
-              <div class="text-subtitle2">{{ attendanceEntry.student.code }}</div>
-            </div>
-            <div class="q-mt-md q-gutter-md full-width">
-              <q-btn-toggle
-                v-model="attendanceEntry.status"
-                spread
-                no-caps
-                :options="attendanceOptions"
-                color="white"
-                text-color="primary"
-                @update:model-value="updateAttendance(attendanceEntry)"
-              />
-            </div>
-            <div class="q-mt-md flex" v-if="attendanceEntry.status === 'absent'">
-              <q-checkbox
-                v-model="attendanceEntry.is_notified_absence"
-                label="Vắng có phép"
-                color="negative"
-                dark
-                @update:model-value="updateAttendance(attendanceEntry)"
-              />
-            </div>
-          </q-carousel-slide>
-        </q-carousel>
-      </div>
-    </div> -->
-
-    <!-- <q-separator inset v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0" /> -->
-
-    <!-- <div
-      class="q-mt-md q-mx-md"
-      v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
-    >
-      <q-btn class="full-width" color="primary" icon="qr_code" label="Điểm danh sử dụng QR" />
-    </div> -->
   </div>
 </template>
 
 <script setup>
-import { onBeforeMount, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUnitStore } from 'stores/unit-store'
+import { useAppStore } from 'src/stores/app-store'
 import { useRouter } from 'vue-router'
 import { date } from 'quasar'
 
@@ -189,6 +110,7 @@ const expanded = ref(true)
 
 const router = useRouter()
 const unitStore = useUnitStore()
+const appStore = useAppStore()
 
 const dateOptions = ref([])
 const attendanceTypeOptions = ref([])
@@ -196,10 +118,13 @@ const selectedDateOption = ref(null)
 const selectedTypeOption = ref(null)
 const unitAttendancesForSchedule = ref([])
 
-const { unitSchedules } = storeToRefs(unitStore)
+const { unitSchedules, unitDetails } = storeToRefs(unitStore)
+const { setPageSubtitle, setPageTitle } = appStore
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  setPageTitle('Điểm danh')
   await unitStore.fetchUnitSchedules(router.currentRoute.value.params.unit_code)
+  setPageSubtitle(unitDetails.value.name)
   populateUnitScheduleOptions()
 })
 

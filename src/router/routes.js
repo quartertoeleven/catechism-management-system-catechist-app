@@ -3,23 +3,16 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainPageLayout.vue'),
     name: 'home',
+    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+  },
+
+  {
+    path: '/units',
+    component: () => import('layouts/HeaderOnlyLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
       {
-        path: 'units',
-        component: () => import('pages/units/UnitList.vue'),
-      },
-      {
-        path: 'units/:unit_code',
-        component: () => import('pages/units/UnitDetails.vue'),
-        children: [
-          { path: '', component: () => import('pages/units/tabs/UnitInfo.vue') },
-          { path: 'students', component: () => import('pages/units/tabs/UnitStudentList.vue') },
-          {
-            path: 'attendance-check',
-            component: () => import('pages/units/tabs/UnitAttendanceCheck.vue'),
-          },
-        ],
+        path: ':unit_code/attendance-check',
+        component: () => import('pages/units/UnitAttendanceCheck.vue'),
       },
     ],
   },
