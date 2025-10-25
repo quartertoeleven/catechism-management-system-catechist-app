@@ -19,18 +19,19 @@
         <q-card class="my-card bg-grey-1">
           <div class="q-pa-none">
             <div class="row">
-              <div class="col-3">
-                <q-btn flat stack class="full-width q-pa-md" no-caps to="/units">
+              <div class="col-4">
+                <q-btn flat stack class="full-width q-pa-md" no-wrap no-caps to="/units">
                   <q-icon name="mdi-list-box" size="xl" class="q-pb-md" />
                   <div class="text-subtitle2 text-weight-regular">Danh sách</div>
                 </q-btn>
               </div>
-              <div class="col-3">
+              <div class="col-4">
                 <q-btn
                   flat
                   stack
                   class="full-width q-pa-md"
                   no-caps
+                  no-wrap
                   :to="`/units/${currentUser.current_unit?.code}/attendance-check`"
                 >
                   <q-icon name="mdi-check-circle-outline" size="xl" class="q-pb-md" />

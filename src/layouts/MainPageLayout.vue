@@ -35,9 +35,11 @@
         </q-avatar>
         <q-toolbar-title>
           <div class="text-caption">Xin chào, {{ currentUser.catechist?.saint_name }}</div>
-          <div class="text-weight-bold">{{ getFullName(currentUser.catechist || {}) }}</div>
+          <div class="text-weight-bold text-h6">
+            {{ getFullName(currentUser.catechist || {}) }}
+          </div>
         </q-toolbar-title>
-        <q-space />
+        <!-- <q-space /> -->
         <q-btn flat round dense icon="mdi-cog" size="lg" class="q-mr-xs" />
       </q-toolbar>
     </q-header>
