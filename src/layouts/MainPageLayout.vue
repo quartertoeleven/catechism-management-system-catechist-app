@@ -40,7 +40,7 @@
           </div>
         </q-toolbar-title>
         <!-- <q-space /> -->
-        <q-btn flat round dense icon="mdi-cog" size="lg" class="q-mr-xs" />
+        <q-btn flat round dense icon="mdi-cog" size="lg" class="q-mr-xs" to="/settings" />
       </q-toolbar>
     </q-header>
 

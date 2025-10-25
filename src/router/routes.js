@@ -13,11 +13,21 @@ const routes = [
       {
         path: ':unit_code',
         component: () => import('pages/units/UnitStudentList.vue'),
+        name: 'unit_details',
       },
       {
         path: ':unit_code/attendance-check',
         component: () => import('pages/units/UnitAttendanceCheck.vue'),
+        name: 'unit_attendance_check',
       },
+    ],
+  },
+
+  {
+    path: '/settings',
+    component: () => import('layouts/HeaderOnlyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/settings/SettingIndex.vue'), name: 'settings' },
     ],
   },
 
