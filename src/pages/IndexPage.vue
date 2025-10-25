@@ -20,7 +20,14 @@
           <div class="q-pa-none">
             <div class="row">
               <div class="col-4">
-                <q-btn flat stack class="full-width q-pa-md" no-wrap no-caps to="/units">
+                <q-btn
+                  flat
+                  stack
+                  class="full-width q-pa-md"
+                  no-wrap
+                  no-caps
+                  :to="`/units/${currentUser.current_unit?.code}`"
+                >
                   <q-icon name="mdi-list-box" size="xl" class="q-pb-md" />
                   <div class="text-subtitle2 text-weight-regular">Danh sách</div>
                 </q-btn>

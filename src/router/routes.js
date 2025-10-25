@@ -11,6 +11,10 @@ const routes = [
     component: () => import('layouts/HeaderOnlyLayout.vue'),
     children: [
       {
+        path: ':unit_code',
+        component: () => import('pages/units/UnitStudentList.vue'),
+      },
+      {
         path: ':unit_code/attendance-check',
         component: () => import('pages/units/UnitAttendanceCheck.vue'),
       },

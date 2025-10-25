@@ -16,22 +16,33 @@
           <q-item-label>{{ getStudentFullName(student) }}</q-item-label>
           <q-item-label caption lines="1">{{ student.code }}</q-item-label>
         </q-item-section>
-
-        <!-- <q-item-section side>
-          <q-icon name="chat_bubble" color="green" />
-        </q-item-section> -->
       </q-item>
     </q-list>
   </div>
 </template>
 
 <script setup>
-import { useUnitStore } from 'src/stores/unit-store'
 import { storeToRefs } from 'pinia'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+import { useAppStore } from 'src/stores/app-store'
+import { useUnitStore } from 'src/stores/unit-store'
 
 const unitStore = useUnitStore()
+const appStore = useAppStore()
+const router = useRouter()
 
 const { unitDetails } = storeToRefs(unitStore)
+const { resetUnitDetails } = unitStore
+const { setPageSubtitle, setPageTitle } = appStore
+
+onMounted(async () => {
+  resetUnitDetails()
+  await unitStore.getSpecificUnitDetails(router.currentRoute.value.params.unit_code)
+  setPageTitle('Danh sách lớp')
+  setPageSubtitle(unitDetails.value.name)
+})
 
 const getStudentFullName = (student) => {
   const nameSegments = [
