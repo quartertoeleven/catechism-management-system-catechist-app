@@ -5,9 +5,14 @@ import { login as LoginAPI, getAuth } from '../services/auth-service'
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false)
+  const currentUser = ref({})
 
   const setIsAuthenticated = (value) => {
     isAuthenticated.value = value
+  }
+
+  const setCurrentUser = (value) => {
+    currentUser.value = value
   }
 
   const login = async (login_id, password) => {
@@ -17,7 +22,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   const getAuthState = async () => {
     try {
-      await getAuth()
+      const result = await getAuth()
+      setCurrentUser(result.data.data)
       setIsAuthenticated(true)
     } catch (error) {
       console.error(error)
@@ -30,6 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     isAuthenticated,
+    currentUser,
     login,
     getAuthState,
     logout,

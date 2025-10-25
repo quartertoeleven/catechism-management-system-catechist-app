@@ -41,6 +41,7 @@ export default defineBoot(({ app, store, router }) => {
           group: false,
           timeout: 4000,
           progress: true,
+          icon: 'mdi-alert',
         })
         return Promise.reject(error)
       }
@@ -58,6 +59,7 @@ export default defineBoot(({ app, store, router }) => {
           group: false,
           timeout: 4000,
           progress: true,
+          icon: 'mdi-alert',
         })
       }
       return Promise.reject(error)
