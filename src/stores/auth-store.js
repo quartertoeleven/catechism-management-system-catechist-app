@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const login = async (login_id, password) => {
     await LoginAPI(login_id, password)
-    setIsAuthenticated(true)
+    await getAuthState()
   }
 
   const getAuthState = async () => {

@@ -18,7 +18,7 @@
       <q-separator spaced />
 
       <q-item-label header>Ứng dụng</q-item-label>
-      <q-item clickable v-ripple>
+      <q-item clickable v-ripple to="/settings/about">
         <q-item-section>
           <q-item-label>Xem thông tin</q-item-label>
           <q-item-label caption> Xem thông tin về ứng dụng và nhà phát triển</q-item-label>

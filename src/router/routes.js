@@ -2,8 +2,7 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainPageLayout.vue'),
-    name: 'home',
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    children: [{ path: '', name: 'home', component: () => import('pages/IndexPage.vue') }],
   },
 
   {
@@ -28,6 +27,7 @@ const routes = [
     component: () => import('layouts/HeaderOnlyLayout.vue'),
     children: [
       { path: '', component: () => import('pages/settings/SettingIndex.vue'), name: 'settings' },
+      { path: 'about', component: () => import('pages/settings/AboutPage.vue'), name: 'about' },
     ],
   },
 

@@ -1,6 +1,6 @@
 {
   "name": "catechist-app",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "Ứng dụng dành cho Giáo Lý Viên thuộc Hệ thống Quản Lý Giáo Lý",
   "productName": "Ứng dụng Giáo Lý Viên",
   "author": "Minh Hikari <minhhikari1994+dev@outlook.com>",
@@ -10,8 +10,8 @@
     "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{js,cjs,mjs,vue}\"",
     "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
-    "dev": "quasar dev -m pwa",
-    "build": "quasar build -m pwa",
+    "dev": "APP_VERSION=$npm_package_version quasar dev -m pwa",
+    "build": "APP_VERSION=$npm_package_version quasar build -m pwa",
     "postinstall": "quasar prepare"
   },
   "dependencies": {
