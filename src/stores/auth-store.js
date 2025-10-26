@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import { login as LoginAPI, getAuth } from '../services/auth-service'
+import { login as LoginAPI, getAuth, logout as LogoutAPI } from '../services/auth-service'
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false)
@@ -30,7 +30,8 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const logout = () => {
+  const logout = async () => {
+    await LogoutAPI()
     setIsAuthenticated(false)
   }
 

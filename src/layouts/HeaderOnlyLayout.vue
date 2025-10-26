@@ -2,7 +2,7 @@
   <q-layout view="hHh lpr lfr">
     <q-header bordered class="bg-grey-1 text-grey-9">
       <q-toolbar class="q-py-sm">
-        <q-btn flat round dense icon="mdi-chevron-left" to="/" replace />
+        <q-btn flat round dense icon="mdi-chevron-left" :to="navigateBackPath" replace />
         <q-toolbar-title class="text-center q-mr-xl">
           {{ pageTitle }}
           <div class="text-caption">
@@ -23,5 +23,5 @@ import { useAppStore } from 'stores/app-store'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
-const { pageTitle, pageSubtitle } = storeToRefs(appStore)
+const { pageTitle, pageSubtitle, navigateBackPath } = storeToRefs(appStore)
 </script>
