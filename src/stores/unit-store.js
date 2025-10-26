@@ -26,7 +26,8 @@ export const useUnitStore = defineStore('unit', () => {
 
   const fetchUnitSchedules = async (unitCode) => {
     const result = await getUnitSchedules(unitCode)
-    unitSchedules.value = result.data.data
+    unitSchedules.value = result.data.data.schedules
+    unitDetails.value = result.data.data.unit_info
   }
 
   const fetchUnitAttendancesForSchedule = async (unitCode, scheduleId, type) => {

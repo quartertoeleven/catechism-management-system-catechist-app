@@ -41,12 +41,13 @@ export default defineBoot(({ app, store, router }) => {
           group: false,
           timeout: 4000,
           progress: true,
+          icon: 'mdi-alert',
         })
         return Promise.reject(error)
       }
       if (error.response.status === 401) {
         authStore.isAuthenticated = false
-        if (!router.currentRoute.value.name) {
+        if (!router.currentRoute.value.name || router.currentRoute.value.name === 'settings') {
           return Promise.reject(error)
         }
       }
@@ -58,6 +59,7 @@ export default defineBoot(({ app, store, router }) => {
           group: false,
           timeout: 4000,
           progress: true,
+          icon: 'mdi-alert',
         })
       }
       return Promise.reject(error)

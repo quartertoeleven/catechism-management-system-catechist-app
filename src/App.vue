@@ -10,7 +10,7 @@
       </template>
     </q-banner>
   </div>
-  <router-view />
+  <router-view class="bg-grey-1 text-grey-9" />
 </template>
 
 <script setup>

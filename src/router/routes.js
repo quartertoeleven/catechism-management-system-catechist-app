@@ -1,26 +1,33 @@
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    name: 'home',
+    component: () => import('layouts/MainPageLayout.vue'),
+    children: [{ path: '', name: 'home', component: () => import('pages/IndexPage.vue') }],
+  },
+
+  {
+    path: '/units',
+    component: () => import('layouts/HeaderOnlyLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
       {
-        path: 'units',
-        component: () => import('pages/units/UnitList.vue'),
+        path: ':unit_code',
+        component: () => import('pages/units/UnitStudentList.vue'),
+        name: 'unit_details',
       },
       {
-        path: 'units/:unit_code',
-        component: () => import('pages/units/UnitDetails.vue'),
-        children: [
-          { path: '', component: () => import('pages/units/tabs/UnitInfo.vue') },
-          { path: 'students', component: () => import('pages/units/tabs/UnitStudentList.vue') },
-          {
-            path: 'attendance-check',
-            component: () => import('pages/units/tabs/UnitAttendanceCheck.vue'),
-          },
-        ],
+        path: ':unit_code/attendance-check',
+        component: () => import('pages/units/UnitAttendanceCheck.vue'),
+        name: 'unit_attendance_check',
       },
+    ],
+  },
+
+  {
+    path: '/settings',
+    component: () => import('layouts/HeaderOnlyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/settings/SettingIndex.vue'), name: 'settings' },
+      { path: 'about', component: () => import('pages/settings/AboutPage.vue'), name: 'about' },
     ],
   },
 
