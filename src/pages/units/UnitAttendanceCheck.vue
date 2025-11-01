@@ -58,7 +58,7 @@
           :key="attendanceEntry.student.code"
           v-show="
             quickFilterText
-              ? attendanceEntry.full_name?.toLowerCase().includes(quickFilterText)
+              ? attendanceEntry.full_name?.toLowerCase().includes(quickFilterText.toLowerCase())
               : true
           "
         >
