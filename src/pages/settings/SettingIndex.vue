@@ -1,21 +1,21 @@
 <template>
   <div class="q-pa-none">
     <q-list bordered padding>
-      <!-- <q-item-label header>Tài khoản</q-item-label>
-      <q-item clickable v-ripple>
+      <q-item-label header>Tài khoản</q-item-label>
+      <!-- <q-item clickable v-ripple>
         <q-item-section>
           <q-item-label>Thông tin tài khoản</q-item-label>
           <q-item-label caption> Xem và thay đổi thông tin tài khoản </q-item-label>
         </q-item-section>
-      </q-item>
-      <q-item clickable v-ripple>
+      </q-item> -->
+      <q-item clickable v-ripple to="/settings/change-password">
         <q-item-section>
           <q-item-label>Đổi mật khẩu</q-item-label>
           <q-item-label caption> Thay đổi mật khẩu đăng nhập ứng dụng </q-item-label>
         </q-item-section>
       </q-item>
 
-      <q-separator spaced /> -->
+      <q-separator spaced />
 
       <q-item-label header>Ứng dụng</q-item-label>
       <q-item clickable v-ripple to="/settings/about">
