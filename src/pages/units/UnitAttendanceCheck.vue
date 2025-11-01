@@ -40,16 +40,33 @@
       class="q-pa-md q-mb-xl"
       v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
     >
+      <q-input
+        class="q-pb-md"
+        outlined
+        v-model="quickFilterText"
+        placeholder="Nhập để tìm kiếm nhanh"
+        dense
+      >
+        <template v-slot:append v-if="quickFilterText">
+          <q-icon name="mdi-close" @click="quickFilterText = ''" class="cursor-pointer" />
+        </template>
+      </q-input>
+
       <q-list bordered separator>
         <q-item
           v-for="attendanceEntry in unitAttendancesForSchedule"
           :key="attendanceEntry.student.code"
+          v-show="
+            quickFilterText
+              ? attendanceEntry.full_name?.toLowerCase().includes(quickFilterText)
+              : true
+          "
         >
           <q-item-section>
             <div class="row no-wrap justify-start">
               <div class="col">
                 <q-item-label caption>{{ attendanceEntry.student.saint_name }}</q-item-label>
-                <q-item-label> {{ getStudentFullName(attendanceEntry.student) }}</q-item-label>
+                <q-item-label> {{ attendanceEntry.full_name }}</q-item-label>
               </div>
               <q-item-label caption>{{ attendanceEntry.student.code }}</q-item-label>
             </div>
@@ -107,6 +124,7 @@ const attendanceOptions = [
 
 const slide = ref(null)
 const expanded = ref(true)
+const quickFilterText = ref('')
 
 const router = useRouter()
 const unitStore = useUnitStore()
@@ -194,6 +212,9 @@ const populateAttendanceEntry = async () => {
     selectedTypeOption.value.value,
   )
   unitAttendancesForSchedule.value = result
+  unitAttendancesForSchedule.value.forEach((attendanceEntry) => {
+    attendanceEntry.full_name = getStudentFullName(attendanceEntry.student)
+  })
   slide.value = `student-${result[0].student.code}`
   expanded.value = false
 }

@@ -28,6 +28,11 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/settings/SettingIndex.vue'), name: 'settings' },
       { path: 'about', component: () => import('pages/settings/AboutPage.vue'), name: 'about' },
+      {
+        path: 'change-password',
+        component: () => import('pages/settings/ChangePasswordPage.vue'),
+        name: 'changePassword',
+      },
     ],
   },
 

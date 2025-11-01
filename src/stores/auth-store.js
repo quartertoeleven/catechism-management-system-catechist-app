@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { login as LoginAPI, getAuth, logout as LogoutAPI } from '../services/auth-service'
+import { changeAccountPassword } from '../services/user-profile-service'
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false)
@@ -35,11 +36,23 @@ export const useAuthStore = defineStore('auth', () => {
     setIsAuthenticated(false)
   }
 
+  const changePassword = async (current_password, new_password, confirm_password) => {
+    const changePasswordBody = {
+      current_password,
+      new_password,
+      confirm_password,
+    }
+    await changeAccountPassword(changePasswordBody)
+    await LogoutAPI()
+    setIsAuthenticated(false)
+  }
+
   return {
     isAuthenticated,
     currentUser,
     login,
     getAuthState,
     logout,
+    changePassword,
   }
 })
