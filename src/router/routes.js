@@ -23,6 +23,18 @@ const routes = [
   },
 
   {
+    path: '/grades',
+    component: () => import('layouts/HeaderOnlyLayout.vue'),
+    children: [
+      {
+        path: ':grade_code/exams',
+        component: () => import('pages/grades/ExamListPage.vue'),
+        name: 'grade_exams',
+      },
+    ],
+  },
+
+  {
     path: '/settings',
     component: () => import('layouts/HeaderOnlyLayout.vue'),
     children: [
