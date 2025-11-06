@@ -58,12 +58,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useGradeStore } from 'src/stores/grade-store'
 
 const { gradeCode } = defineProps({
   gradeCode: String,
 })
+
+const emit = defineEmits(['closeOnSaveSuccess'])
 
 const gradeStore = useGradeStore()
 
@@ -103,18 +105,22 @@ const semesterOptions = [
   },
 ]
 
+onMounted(() => {
+  resetFormData()
+})
+
+const resetFormData = () => {
+  examEntryFormData.value = {
+    id: null,
+    name: '',
+    factor: 1,
+    semester: '',
+  }
+}
+
 const open = () => {
   dialogOpen.value = true
 }
-
-// const resetFormData = () => {
-//   examEntryFormData.value = {
-//     id: null,
-//     name: '',
-//     factor: 1,
-//     semester: '',
-//   }
-// }
 
 const onSave = async () => {
   const body = {
@@ -125,7 +131,9 @@ const onSave = async () => {
   }
   await createGradeExam(gradeCode, body)
   dialogOpen.value = false
+  emit('closeOnSaveSuccess')
 }
+
 defineExpose({
   open,
 })

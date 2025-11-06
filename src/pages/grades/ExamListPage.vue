@@ -37,6 +37,7 @@
   <ExamEntryModal
     ref="examEntryModalRef"
     :gradeCode="router.currentRoute.value.params.grade_code"
+    @closeOnSaveSuccess="() => getGradeExamList(router.currentRoute.value.params.grade_code)"
   />
 </template>
 
