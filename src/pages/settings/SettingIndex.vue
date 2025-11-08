@@ -37,7 +37,12 @@
 
       <q-item>
         <q-item-section>
-          <q-btn color="negative" label="Đăng xuất" @click.prevent="handleLogout()" />
+          <q-btn
+            color="negative"
+            label="Đăng xuất"
+            @click.prevent="handleLogout()"
+            icon="mdi-logout"
+          />
         </q-item-section>
       </q-item>
     </q-list>

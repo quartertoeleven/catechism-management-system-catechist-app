@@ -2,8 +2,11 @@
   <div class="bg-grey-1">
     <div class="window-height flex column flex-center fixed-center" style="width: 75vw">
       <div class="text-center q-mb-xl">
-        <h1 class="text-h4 text-weight-bold q-mb-sm">QUẢN LÝ GIÁO LÝ</h1>
-        <p>Ứng dụng dành cho Giáo Lý Viên</p>
+        <h1 class="text-h5 text-weight-bold q-mb-sm">
+          ỨNG DỤNG DÀNH CHO <br />
+          GIÁO LÝ VIÊN
+        </h1>
+        <p class="text-subtitle">Hệ thống Quản Lý Giáo Lý - Thiếu Nhi Tam Hà</p>
       </div>
       <div class="full-width">
         <q-form class="q-gutter-y-md" @submit="handleLogin">
@@ -21,7 +24,13 @@
             type="password"
           />
           <div class="">
-            <q-btn class="full-width" type="submit" color="primary" label="Đăng nhập" no-caps />
+            <q-btn
+              class="full-width"
+              type="submit"
+              color="primary"
+              label="Đăng nhập"
+              icon="mdi-login"
+            />
           </div>
         </q-form>
       </div>

@@ -45,6 +45,19 @@
                   <div class="text-subtitle2 text-weight-regular">Điểm danh</div>
                 </q-btn>
               </div>
+              <div class="col-4">
+                <q-btn
+                  flat
+                  stack
+                  class="full-width q-pa-md"
+                  no-caps
+                  no-wrap
+                  :to="`/units/${currentUser.current_unit?.code}/exam-scores`"
+                >
+                  <q-icon name="mdi-book-edit-outline" size="xl" class="q-pb-md" />
+                  <div class="text-subtitle2 text-weight-regular">Điểm kiểm tra</div>
+                </q-btn>
+              </div>
             </div>
           </div>
         </q-card>
@@ -79,7 +92,7 @@
                   no-caps
                   :to="`/grades/${currentUser.current_grade?.code}/exams`"
                 >
-                  <q-icon name="mdi-file-document-multiple-outline" size="xl" class="q-pb-md" />
+                  <q-icon name="mdi-book-multiple-outline" size="xl" class="q-pb-md" />
                   <div class="text-subtitle2 text-weight-regular">Bài kiểm tra</div>
                 </q-btn>
               </div>

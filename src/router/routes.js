@@ -19,6 +19,11 @@ const routes = [
         component: () => import('pages/units/UnitAttendanceCheck.vue'),
         name: 'unit_attendance_check',
       },
+      {
+        path: ':unit_code/exam-scores',
+        component: () => import('pages/units/UnitExamScores.vue'),
+        name: 'unit_exam_scores',
+      },
     ],
   },
 
