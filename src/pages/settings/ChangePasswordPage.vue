@@ -3,7 +3,7 @@
     <q-card bordered class="text-body2 shadow-0 bg-grey-1">
       <q-card-section class="text-body2">
         <p><b>Yêu cầu cho mật khẩu mới</b></p>
-        <q-list dense="">
+        <q-list dense class="q-pb-md">
           <q-item
             v-for="rule in passwordRules"
             :key="rule.message"
@@ -21,6 +21,7 @@
             </q-item-section>
           </q-item>
         </q-list>
+        <p>Bạn sẽ cần đăng nhập lại với mật khẩu mới sau khi đổi mật khẩu thành công.</p>
       </q-card-section>
     </q-card>
 
@@ -55,7 +56,7 @@
           label="Đổi mật khẩu"
           no-caps
           :disable="passwordRules.every((rule) => !rule.valid)"
-          icon="mdi-submit"
+          icon="mdi-lock-reset"
         />
       </div>
     </q-form>

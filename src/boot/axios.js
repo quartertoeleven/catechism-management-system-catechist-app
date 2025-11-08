@@ -27,7 +27,6 @@ export default defineBoot(({ app, store, router }) => {
 
   api.interceptors.response.use(
     (response) => {
-      console.log(app)
       Loading.hide()
       return response
     },
@@ -47,7 +46,10 @@ export default defineBoot(({ app, store, router }) => {
       }
       if (error.response.status === 401) {
         authStore.isAuthenticated = false
-        if (!router.currentRoute.value.name || router.currentRoute.value.name === 'settings') {
+        if (
+          !router.currentRoute.value.name ||
+          ['settings', 'changePassword'].includes(router.currentRoute.value.name)
+        ) {
           return Promise.reject(error)
         }
       }

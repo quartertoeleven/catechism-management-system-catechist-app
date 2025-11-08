@@ -1,16 +1,16 @@
 <template>
-  <div class="q-pa-md">
-    <q-list>
+  <div class="q-pa-md q-gutter-md">
+    <q-list bordered>
       <q-expansion-item
-        expand-separator
         icon="mdi-account-settings"
         label="Account settings"
         caption="John Doe"
         expand-icon="mdi-menu-down"
         default-opened
+        class="bg-grey-3"
       >
         <template v-slot:header>
-          <q-item-section class="q-pl-sm">
+          <q-item-section class="q-pl-sm q-py-xs">
             <q-item-label class="text-weight-medium">LỚP GIÁO LÝ</q-item-label>
             <q-item-label caption lines="1">{{ currentUser.current_unit?.name }}</q-item-label>
           </q-item-section>
@@ -43,6 +43,57 @@
                 >
                   <q-icon name="mdi-check-circle-outline" size="xl" class="q-pb-md" />
                   <div class="text-subtitle2 text-weight-regular">Điểm danh</div>
+                </q-btn>
+              </div>
+              <div class="col-4">
+                <q-btn
+                  flat
+                  stack
+                  class="full-width q-pa-md"
+                  no-caps
+                  no-wrap
+                  :to="`/units/${currentUser.current_unit?.code}/exam-scores`"
+                >
+                  <q-icon name="mdi-book-edit-outline" size="xl" class="q-pb-md" />
+                  <div class="text-subtitle2 text-weight-regular">Điểm kiểm tra</div>
+                </q-btn>
+              </div>
+            </div>
+          </div>
+        </q-card>
+      </q-expansion-item>
+    </q-list>
+
+    <q-list bordered>
+      <q-expansion-item
+        icon="mdi-account-settings"
+        label="Account settings"
+        caption="John Doe"
+        expand-icon="mdi-menu-down"
+        default-opened
+        class="bg-grey-3"
+      >
+        <template v-slot:header>
+          <q-item-section class="q-pl-sm q-py-xs">
+            <q-item-label class="text-weight-medium">KHỐI GIÁO LÝ</q-item-label>
+            <q-item-label caption lines="1">{{ currentUser.current_grade?.name }}</q-item-label>
+          </q-item-section>
+        </template>
+
+        <q-card class="my-card bg-grey-1">
+          <div class="q-pa-none">
+            <div class="row">
+              <div class="col-4">
+                <q-btn
+                  flat
+                  stack
+                  class="full-width q-pa-md"
+                  no-wrap
+                  no-caps
+                  :to="`/grades/${currentUser.current_grade?.code}/exams`"
+                >
+                  <q-icon name="mdi-book-multiple-outline" size="xl" class="q-pb-md" />
+                  <div class="text-subtitle2 text-weight-regular">Bài kiểm tra</div>
                 </q-btn>
               </div>
             </div>

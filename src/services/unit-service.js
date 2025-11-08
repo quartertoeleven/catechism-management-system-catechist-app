@@ -17,3 +17,7 @@ export const getUnitAttendancesForSchedule = (unit_code, schedule_id, type) => {
     params: { schedule_id: schedule_id, type: type },
   })
 }
+
+export const getUnitExamScores = (unit_code, exam_id) => {
+  return api.get(`/units/${unit_code}/exam-scores/${exam_id}`)
+}
