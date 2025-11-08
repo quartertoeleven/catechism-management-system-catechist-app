@@ -2,7 +2,9 @@
   <q-dialog v-model="dialogOpen" persistent>
     <q-card class="full-width">
       <q-card-section>
-        <div class="text-h6">Thêm bài kiểm tra</div>
+        <div class="text-h6">
+          {{ isEditMode ? 'Chỉnh sửa bài kiểm tra' : 'Tạo bài kiểm tra mới' }}
+        </div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
@@ -13,7 +15,9 @@
             outlined
             label="Tên bài kiểm tra *"
             v-model="examEntryFormData.name"
+            lazy-rules
             :rules="examEntryFormDataValidations.rules.name"
+            autofocus
           />
           <div class="row q-gutter-x-md">
             <div class="col">
@@ -24,6 +28,7 @@
                 label="Hệ số *"
                 type="number"
                 v-model="examEntryFormData.factor"
+                lazy-rules
                 :rules="examEntryFormDataValidations.rules.factor"
               />
             </div>
@@ -33,6 +38,8 @@
                 dropdown-icon="mdi-menu-down"
                 outlined
                 :options="semesterOptions"
+                map-options
+                emit-value
                 v-model="examEntryFormData.semester"
                 label="Học kì *"
                 :rules="examEntryFormDataValidations.rules.semester"
@@ -48,7 +55,7 @@
           flat
           type="submit"
           form="examEntryForm"
-          label="Tạo mới"
+          :label="isEditMode ? 'Cập nhật' : 'Tạo mới'"
           icon="mdi-content-save"
           color="primary"
         />
@@ -60,16 +67,18 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useGradeStore } from 'src/stores/grade-store'
+import { semesterOptions } from 'src/helpers/constants'
 
 const { gradeCode } = defineProps({
   gradeCode: String,
+  examEntry: { type: Object, default: null },
 })
-
 const emit = defineEmits(['closeOnSaveSuccess'])
 
 const gradeStore = useGradeStore()
 
-const { createGradeExam } = gradeStore
+const { createOrUpdateGradeExam } = gradeStore
+const isEditMode = ref(false)
 const dialogOpen = ref(false)
 const examEntryFormData = ref({
   id: null,
@@ -91,23 +100,14 @@ const examEntryFormDataValidations = {
     factor: [
       (val) => (val && Number(val) > 0 && Number.isInteger(Number(val))) || 'Phải là số nguyên > 0',
     ],
-    semester: [(val) => val || 'Vui lòng chọn học kì'],
+    semester: [
+      (val) => {
+        console.log(val)
+        return !!val || 'Vui lòng chọn học kì'
+      },
+    ],
   },
 }
-const semesterOptions = [
-  {
-    label: 'Học kì I',
-    value: 'first',
-  },
-  {
-    label: 'Học kì II',
-    value: 'second',
-  },
-]
-
-onMounted(() => {
-  resetFormData()
-})
 
 const resetFormData = () => {
   examEntryFormData.value = {
@@ -118,8 +118,24 @@ const resetFormData = () => {
   }
 }
 
-const open = () => {
+onMounted(() => {
+  resetFormData()
+})
+
+const open = (existingExamEntry = null) => {
   dialogOpen.value = true
+  if (existingExamEntry) {
+    isEditMode.value = true
+    examEntryFormData.value = {
+      id: existingExamEntry.id,
+      name: existingExamEntry.name,
+      factor: existingExamEntry.factor,
+      semester: existingExamEntry.semester,
+    }
+  } else {
+    isEditMode.value = false
+    resetFormData()
+  }
 }
 
 const onSave = async () => {
@@ -127,9 +143,9 @@ const onSave = async () => {
     id: examEntryFormData.value.id,
     name: examEntryFormData.value.name,
     factor: Number(examEntryFormData.value.factor),
-    semester: examEntryFormData.value.semester.value,
+    semester: examEntryFormData.value.semester,
   }
-  await createGradeExam(gradeCode, body)
+  await createOrUpdateGradeExam(gradeCode, body)
   dialogOpen.value = false
   emit('closeOnSaveSuccess')
 }
