@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import { login as LoginAPI, getAuth, logout as LogoutAPI } from '../services/auth-service'
+import { login as LoginAPI, getAuth, logout as LogoutAPI, loginSSO } from '../services/auth-service'
 import { changeAccountPassword } from '../services/user-profile-service'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -47,6 +47,10 @@ export const useAuthStore = defineStore('auth', () => {
     setIsAuthenticated(false)
   }
 
+  const authenticateWithSSO = async (loginIdToken) => {
+    await loginSSO(loginIdToken)
+  }
+
   return {
     isAuthenticated,
     currentUser,
@@ -54,5 +58,6 @@ export const useAuthStore = defineStore('auth', () => {
     getAuthState,
     logout,
     changePassword,
+    authenticateWithSSO,
   }
 })

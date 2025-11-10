@@ -33,7 +33,19 @@
             />
           </div>
         </q-form>
+
+        <q-separator class="q-my-lg" />
+
+        <q-btn
+          outline
+          class="full-width"
+          color="primary"
+          label="Đăng nhập bằng Google"
+          icon="mdi-google"
+          @click.prevent="handleLoginWithGoogle"
+        />
       </div>
+
       <div class="q-mt-xl full-width text-center text-caption">
         <div>Phát triển bởi <span class="text-weight-bold">Quarter To Eleven</span></div>
         <sub
@@ -50,13 +62,17 @@ import { useAuthStore } from 'src/stores/auth-store'
 import { useAppStore } from 'src/stores/app-store'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+
+const auth = getAuth()
+const googleProvider = new GoogleAuthProvider()
 
 const router = useRouter()
 const authStore = useAuthStore()
 const appStore = useAppStore()
 
 const { appVersion } = storeToRefs(appStore)
-const { login } = authStore
+const { login, authenticateWithSSO } = authStore
 
 const loginFormData = ref({
   username: '',
@@ -66,5 +82,16 @@ const loginFormData = ref({
 const handleLogin = async () => {
   await login(loginFormData.value.username, loginFormData.value.password)
   router.push({ name: 'home' })
+}
+
+const handleLoginWithGoogle = async () => {
+  try {
+    await signInWithPopup(auth, googleProvider)
+    const loginIdToken = await auth.currentUser.getIdToken()
+    await authenticateWithSSO(loginIdToken)
+    router.push({ name: 'home' })
+  } catch (e) {
+    console.error(e)
+  }
 }
 </script>
