@@ -1,7 +1,7 @@
 import { defineBoot } from '#q-app/wrappers'
 import { initializeApp } from 'firebase/app'
 
-const firebaseConfig = {}
+const firebaseConfig = JSON.parse(process.env.FIREBASE_AUTH_CONFIG)
 
 const firebaseApp = initializeApp(firebaseConfig)
 
