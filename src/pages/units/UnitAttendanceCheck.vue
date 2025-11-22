@@ -50,6 +50,15 @@
         <template v-slot:append v-if="quickFilterText">
           <q-icon name="mdi-close" @click="quickFilterText = ''" class="cursor-pointer" />
         </template>
+        <template v-slot:after>
+          <span class="text-caption q-px-sm">hoặc</span>
+          <q-btn
+            square
+            color="primary"
+            icon="mdi-qrcode-scan"
+            @click="qrAttendanceCheckModalRef.open()"
+          />
+        </template>
       </q-input>
 
       <q-list bordered separator>
@@ -94,6 +103,14 @@
       <q-btn fab icon="mdi-arrow-up" color="primary" @click="scrollToTop" />
     </q-page-sticky>
   </div>
+
+  <QRAttendanceCheckModal
+    ref="qrAttendanceCheckModalRef"
+    :selectedDateObj="selectedDateOption"
+    :selectedTypeObj="selectedTypeOption"
+    :currentUnit="unitDetails"
+    @onClose="populateAttendanceEntry()"
+  />
 </template>
 
 <script setup>
@@ -103,6 +120,8 @@ import { useUnitStore } from 'stores/unit-store'
 import { useAppStore } from 'src/stores/app-store'
 import { useRouter } from 'vue-router'
 import { date } from 'quasar'
+
+import QRAttendanceCheckModal from './modals/QRAttendanceCheckModal.vue'
 
 const attendanceOptions = [
   {
@@ -135,6 +154,7 @@ const attendanceTypeOptions = ref([])
 const selectedDateOption = ref(null)
 const selectedTypeOption = ref(null)
 const unitAttendancesForSchedule = ref([])
+const qrAttendanceCheckModalRef = ref(null)
 
 const { unitSchedules, unitDetails } = storeToRefs(unitStore)
 const { setPageSubtitle, setPageTitle } = appStore
