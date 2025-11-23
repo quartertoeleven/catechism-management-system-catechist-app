@@ -7,14 +7,17 @@ import {
   getUnitAttendancesForSchedule,
   getUnitExamScores,
 } from '../services/unit-service'
-import { doAttendanceCheck } from '../services/attendance-service'
+import { doAttendanceCheck, doAttendanceCheckWithQR } from '../services/attendance-service'
 import { createOrUpdateStudentExamScore } from '../services/student-service'
+import { useAppStore } from './app-store'
 
 export const useUnitStore = defineStore('unit', () => {
   const unitList = ref([])
   const unitDetails = ref({})
   const unitSchedules = ref([])
   const unitExamScores = ref([])
+
+  const appStore = useAppStore()
 
   const getUnitList = async () => {
     const result = await getUnits()
@@ -54,6 +57,25 @@ export const useUnitStore = defineStore('unit', () => {
     await doAttendanceCheck(gradeScheduleId, attendanceData)
   }
 
+  const updateAttendanceStatusWithQR = async (gradeScheduleId, type, qrStr) => {
+    const attendanceDataWithQr = {
+      type: type,
+      qrData: qrStr,
+      gradeScheduleId: gradeScheduleId,
+    }
+
+    try {
+      appStore.setSuppressLoading(true)
+      const result = await doAttendanceCheckWithQR(gradeScheduleId, attendanceDataWithQr)
+      return result.data
+    } catch (error) {
+      console.error(error)
+      return null
+    } finally {
+      appStore.setSuppressLoading(false)
+    }
+  }
+
   const fetchUnitExamScoreList = async (unitCode, examId) => {
     const result = await getUnitExamScores(unitCode, examId)
     return result.data.data
@@ -80,5 +102,6 @@ export const useUnitStore = defineStore('unit', () => {
     unitExamScores,
     fetchUnitExamScoreList,
     updateStudentExamScore,
+    updateAttendanceStatusWithQR,
   }
 })

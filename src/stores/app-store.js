@@ -6,6 +6,7 @@ export const useAppStore = defineStore('app', () => {
   const pageSubtitle = ref('')
   const navigateBackPath = ref('/')
   const appVersion = ref(process.env.APP_VERSION || 'develop')
+  const suppressLoading = ref(false)
 
   const setPageTitle = (title) => {
     pageTitle.value = title
@@ -19,6 +20,8 @@ export const useAppStore = defineStore('app', () => {
     navigateBackPath.value = path || '/'
   }
 
+  const setSuppressLoading = (value) => (suppressLoading.value = value)
+
   return {
     pageTitle,
     setPageTitle,
@@ -27,5 +30,7 @@ export const useAppStore = defineStore('app', () => {
     navigateBackPath,
     setNavigateBackPath,
     appVersion,
+    suppressLoading,
+    setSuppressLoading,
   }
 })

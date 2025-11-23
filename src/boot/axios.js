@@ -2,6 +2,7 @@ import { defineBoot } from '#q-app/wrappers'
 import { Notify, Loading } from 'quasar'
 import axios from 'axios'
 import { useAuthStore } from 'src/stores/auth-store'
+import { useAppStore } from 'src/stores/app-store'
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -13,10 +14,13 @@ const api = axios.create({ baseURL: process.env.API_BASE_URL, withCredentials: t
 
 export default defineBoot(({ app, store, router }) => {
   const authStore = useAuthStore(store)
+  const appStore = useAppStore(store)
 
   api.interceptors.request.use(
     (config) => {
-      Loading.show()
+      if (!appStore.suppressLoading) {
+        Loading.show()
+      }
       return config
     },
     (error) => {
