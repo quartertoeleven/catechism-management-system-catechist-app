@@ -37,6 +37,45 @@
     <q-separator inset />
 
     <div
+      class="q-px-md q-py-md q-mt-xs"
+      v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
+    >
+      <q-list bordered separator dense>
+        <q-item>
+          <q-item-section>
+            <q-item-label class="text-weight-bold">Tổng</q-item-label>
+          </q-item-section>
+          <q-item-section side> {{ unitAttendancesForSchedule.length || 0 }} </q-item-section>
+        </q-item>
+        <q-item>
+          <q-item-section>
+            <q-item-label class="text-weight-bold">Hiện diện</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            {{ unitAttendancesForSchedule.filter((a) => a.status === 'present').length || 0 }}
+          </q-item-section>
+        </q-item>
+        <q-item>
+          <q-item-section>
+            <q-item-label class="text-weight-bold">Vắng</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-item-label>
+              Có phép:
+              {{ unitAttendancesForSchedule.filter((a) => a.status === 'leave').length || 0 }}
+            </q-item-label>
+            <q-item-label>
+              Không phép:
+              {{ unitAttendancesForSchedule.filter((a) => a.status === 'absent').length || 0 }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </div>
+
+    <q-separator inset v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0" />
+
+    <div
       class="q-pa-md q-mb-xl"
       v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
     >

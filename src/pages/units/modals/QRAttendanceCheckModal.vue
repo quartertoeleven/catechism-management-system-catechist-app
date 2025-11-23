@@ -55,13 +55,16 @@
             <template v-else>
               <q-icon
                 v-if="qrScannerStatus.state === SCANNER_STATE_ERROR"
-                name="close-circle-outline"
+                name="mdi-close-circle-outline"
               />
               <q-icon
                 v-if="qrScannerStatus.state === SCANNER_STATE_SUCCESS"
                 name="mdi-check-circle-outline"
               />
-              <q-icon v-else name="mdi-information-outline" />
+              <q-icon
+                v-if="qrScannerStatus.state === SCANNER_STATE_INFO"
+                name="mdi-information-outline"
+              />
             </template>
           </template>
           <div class="text-weight-medium">{{ qrScannerStatus.title }}</div>
