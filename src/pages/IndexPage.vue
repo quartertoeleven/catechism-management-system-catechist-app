@@ -28,7 +28,7 @@
                   no-caps
                   :to="`/units/${currentUser.current_unit?.code}`"
                 >
-                  <q-icon name="mdi-list-box" size="xl" class="q-pb-md" />
+                  <q-icon name="mdi-list-box-outline" size="xl" class="q-pb-md" />
                   <div class="text-subtitle2 text-weight-regular">Danh sách</div>
                 </q-btn>
               </div>
@@ -56,6 +56,19 @@
                 >
                   <q-icon name="mdi-book-edit-outline" size="xl" class="q-pb-md" />
                   <div class="text-subtitle2 text-weight-regular">Điểm kiểm tra</div>
+                </q-btn>
+              </div>
+              <div class="col-4">
+                <q-btn
+                  flat
+                  stack
+                  class="full-width q-pa-md"
+                  no-wrap
+                  no-caps
+                  :to="`/units/${currentUser.current_unit?.code}/statistics`"
+                >
+                  <q-icon name="mdi-chart-box-outline" size="xl" class="q-pb-md" />
+                  <div class="text-subtitle2 text-weight-regular">Thống kê</div>
                 </q-btn>
               </div>
             </div>

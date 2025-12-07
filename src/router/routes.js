@@ -24,6 +24,11 @@ const routes = [
         component: () => import('pages/units/UnitExamScores.vue'),
         name: 'unit_exam_scores',
       },
+      {
+        path: ':unit_code/statistics',
+        component: () => import('pages/units/UnitStatistics.vue'),
+        name: 'unit_statistics',
+      },
     ],
   },
 

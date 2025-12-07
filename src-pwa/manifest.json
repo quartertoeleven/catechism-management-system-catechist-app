@@ -1,5 +1,5 @@
 {
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#027be3",
   "icons": [
@@ -31,5 +31,7 @@
   ],
   "description": "Ứng dụng dành cho Giáo Lý Viên, thuộc hệ thống quản lý Giáo Lý - thiếu nhi giáo xứ Tam Hà",
   "name": "App Giáo Lý Viên",
-  "short_name": "App Giáo Lý Viên"
+  "short_name": "App Giáo Lý Viên",
+  "start_url": "/",
+  "display": "standalone"
 }
