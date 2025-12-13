@@ -6,6 +6,7 @@ import {
   getUnitSchedules,
   getUnitAttendancesForSchedule,
   getUnitExamScores,
+  getUnitAttendanceStatistics,
 } from '../services/unit-service'
 import { doAttendanceCheck, doAttendanceCheckWithQR } from '../services/attendance-service'
 import { createOrUpdateStudentExamScore } from '../services/student-service'
@@ -16,6 +17,7 @@ export const useUnitStore = defineStore('unit', () => {
   const unitDetails = ref({})
   const unitSchedules = ref([])
   const unitExamScores = ref([])
+  const unitAttendanceStatistics = ref([])
 
   const appStore = useAppStore()
 
@@ -89,6 +91,15 @@ export const useUnitStore = defineStore('unit', () => {
     await createOrUpdateStudentExamScore(studentCode, { exam_id: examId, score: score })
   }
 
+  const fetchUnitAttendanceStatistic = async (unitCode) => {
+    const result = await getUnitAttendanceStatistics(unitCode)
+    unitAttendanceStatistics.value = result.data.data.students || []
+    unitDetails.value = {
+      code: result.data.data.code,
+      name: result.data.data.name,
+    }
+  }
+
   return {
     unitList,
     unitDetails,
@@ -103,5 +114,7 @@ export const useUnitStore = defineStore('unit', () => {
     fetchUnitExamScoreList,
     updateStudentExamScore,
     updateAttendanceStatusWithQR,
+    unitAttendanceStatistics,
+    fetchUnitAttendanceStatistic,
   }
 })

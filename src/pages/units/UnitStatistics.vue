@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <q-table
-      :rows="unitDetails.students || []"
+      :rows="unitAttendanceStatistics || []"
       :columns="columns"
       flat
       bordered
@@ -14,7 +14,7 @@
       dense
     >
       <template v-slot:body="props">
-        <q-tr :props="props">
+        <q-tr :props="props" @click="props.expand = !props.expand">
           <q-td auto-width style="padding-right: unset; padding-left: 0.5rem">
             <q-btn
               size="sm"
@@ -24,7 +24,11 @@
               :icon="props.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"
             />
           </q-td>
-          <q-td key="first_name" :props="props" style="padding-right: unset; padding-left: 0.5rem">
+          <q-td
+            key="student_info"
+            :props="props"
+            style="padding-right: unset; padding-left: 0.5rem"
+          >
             <div class="text-caption text-grey-8">
               {{ props.row.saint_name }}
             </div>
@@ -35,9 +39,19 @@
               {{ props.row.code }}
             </div>
           </q-td>
-          <q-td key="date_of_birth" :props="props" style="padding-left: 0.5rem">
-            <div><b>Thánh lễ:</b> 6/10</div>
-            <div><b>Giáo lý:</b> 6/10</div>
+          <q-td key="attendance_summary" :props="props" style="padding-left: 0.5rem">
+            <div>
+              <b>Thánh lễ:</b>
+              {{
+                props.row.attendance_data.filter((item) => item.mass_status === 'present').length
+              }}/{{ props.row.attendance_data.filter((item) => item.mass_status).length }}
+            </div>
+            <div>
+              <b>Giáo lý:</b>
+              {{
+                props.row.attendance_data.filter((item) => item.lesson_status === 'present').length
+              }}/{{ props.row.attendance_data.filter((item) => item.lesson_status).length }}
+            </div>
           </q-td>
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
@@ -51,42 +65,88 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td class="text-left">30/12/2021</td>
-                  <td class="text-center">
-                    <q-chip color="positive" size="0.7rem" text-color="white"> Hiện diện </q-chip>
+                <tr
+                  v-for="attendance_entry in props.row.attendance_data"
+                  :key="`${props.row.code}-${attendance_entry.date}`"
+                >
+                  <td class="text-left">
+                    {{ date.formatDate(attendance_entry.date, 'DD/MM/YYYY') }}
                   </td>
                   <td class="text-center">
-                    <q-chip color="positive" size="sm" text-color="white"> Hiện diện </q-chip>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left">30/12/2021</td>
-                  <td class="text-center">
-                    <q-chip color="positive" size="sm" text-color="white">
-                      <b>Hiện diện</b>
+                    <q-chip
+                      v-if="attendance_entry.mass_status === 'present'"
+                      color="positive"
+                      size="0.7rem"
+                      text-color="white"
+                      class="text-weight-bold"
+                    >
+                      Hiện diện
+                    </q-chip>
+                    <q-chip
+                      v-if="attendance_entry.mass_status === 'leave'"
+                      color="warning"
+                      size="0.7rem"
+                      text-color="white"
+                      class="text-weight-bold"
+                    >
+                      Vắng phép
+                    </q-chip>
+                    <q-chip
+                      v-if="attendance_entry.mass_status === 'absent'"
+                      color="negative"
+                      size="0.7rem"
+                      text-color="white"
+                      class="text-weight-bold"
+                    >
+                      Vắng
+                    </q-chip>
+                    <q-chip
+                      v-if="!attendance_entry.mass_status"
+                      color="grey"
+                      size="0.7rem"
+                      text-color="white"
+                      class="text-weight-bold"
+                    >
+                      (không tính)
                     </q-chip>
                   </td>
                   <td class="text-center">
-                    <q-chip color="negative" size="sm" text-color="white"> Vắng </q-chip>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left">30/12/2021</td>
-                  <td class="text-center">
-                    <q-chip color="negative" size="sm" text-color="white"> Vắng </q-chip>
-                  </td>
-                  <td class="text-center">
-                    <q-chip color="positive" size="sm" text-color="white"> Hiện diện </q-chip>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left">30/12/2021</td>
-                  <td class="text-center">
-                    <q-chip color="positive" size="sm" text-color="white"> Hiện diện </q-chip>
-                  </td>
-                  <td class="text-center">
-                    <q-chip color="warning" size="sm" text-color="white"> Vắng phép </q-chip>
+                    <q-chip
+                      v-if="attendance_entry.lesson_status === 'present'"
+                      color="positive"
+                      size="0.7rem"
+                      text-color="white"
+                      class="text-weight-bold"
+                    >
+                      Hiện diện
+                    </q-chip>
+                    <q-chip
+                      v-if="attendance_entry.lesson_status === 'leave'"
+                      color="warning"
+                      size="0.7rem"
+                      text-color="white"
+                      class="text-weight-bold"
+                    >
+                      Vắng phép
+                    </q-chip>
+                    <q-chip
+                      v-if="attendance_entry.lesson_status === 'absent'"
+                      color="negative"
+                      size="0.7rem"
+                      text-color="white"
+                      class="text-weight-bold"
+                    >
+                      Vắng
+                    </q-chip>
+                    <q-chip
+                      v-if="!attendance_entry.lesson_status"
+                      color="grey"
+                      size="0.7rem"
+                      text-color="white"
+                      class="text-weight-bold"
+                    >
+                      (không tính)
+                    </q-chip>
                   </td>
                 </tr>
               </tbody>
@@ -95,41 +155,6 @@
         </q-tr>
       </template>
     </q-table>
-    <!-- <q-list>
-      <q-item
-        v-for="student in unitDetails.students"
-        :key="student.code"
-        class=""
-        clickable
-        v-ripple
-      >
-        <q-item-section avatar>
-          <q-avatar color="primary" text-color="white"> </q-avatar>
-        </q-item-section>
-<style lang="sass" scoped>
-:deep(.sticky-column-table)
-  /* specifying max-width so the example can
-    highlight the sticky column on any browser window */
-
-  thead tr:first-child th:first-chil3d
-    /* bg color is important for th; just specify one */
-    background-color: $grey-3
-
-  td:first-child
-    background-color: $grey-3
-
-  th:first-child,
-  td:first-child
-    position: sticky
-    left: 0
-    z-index: 1
-</style>
-        <q-item-section>
-          <q-item-label>{{ getStudentFullName(student) }}</q-item-label>
-          <q-item-label caption lines="1">{{ student.code }}</q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list> -->
   </div>
 </template>
 
@@ -137,7 +162,7 @@
 import { storeToRefs } from 'pinia'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-// import { date } from 'quasar'
+import { date } from 'quasar'
 
 import { useAppStore } from 'src/stores/app-store'
 import { useUnitStore } from 'src/stores/unit-store'
@@ -146,35 +171,33 @@ const unitStore = useUnitStore()
 const appStore = useAppStore()
 const router = useRouter()
 
-const { unitDetails } = storeToRefs(unitStore)
+const { unitDetails, unitAttendanceStatistics } = storeToRefs(unitStore)
 const { resetUnitDetails } = unitStore
 const { setPageSubtitle, setPageTitle } = appStore
 
 const columns = [
   {},
   {
-    name: 'first_name',
+    name: 'student_info',
     required: true,
     label: 'Học viên',
     align: 'left',
-    field: 'first_name',
     sortable: true,
     class: 'text-left',
   },
   {
-    name: 'date_of_birth',
+    name: 'attendance_summary',
     required: true,
     label: 'Hiện diện',
     align: 'left',
-    field: 'date_of_birth',
     sortable: true,
   },
 ]
 
 onMounted(async () => {
   resetUnitDetails()
-  await unitStore.getSpecificUnitDetails(router.currentRoute.value.params.unit_code)
-  setPageTitle('Tổng kết')
+  await unitStore.fetchUnitAttendanceStatistic(router.currentRoute.value.params.unit_code)
+  setPageTitle('Thống kê')
   setPageSubtitle(unitDetails.value.name)
 })
 
