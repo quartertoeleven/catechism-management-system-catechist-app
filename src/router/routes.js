@@ -41,6 +41,11 @@ const routes = [
         component: () => import('pages/grades/ExamListPage.vue'),
         name: 'grade_exams',
       },
+      {
+        path: ':grade_code/schedules',
+        component: () => import('pages/grades/ScheduleListPage.vue'),
+        name: 'grade_schedules',
+      },
     ],
   },
 

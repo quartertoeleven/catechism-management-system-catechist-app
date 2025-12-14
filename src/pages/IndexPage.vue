@@ -28,7 +28,7 @@
                   no-caps
                   :to="`/units/${currentUser.current_unit?.code}`"
                 >
-                  <q-icon name="mdi-list-box-outline" size="xl" class="q-pb-md" />
+                  <q-icon name="mdi-list-box" size="xl" class="q-pb-md" />
                   <div class="text-subtitle2 text-weight-regular">Danh sách</div>
                 </q-btn>
               </div>
@@ -54,7 +54,7 @@
                   no-wrap
                   :to="`/units/${currentUser.current_unit?.code}/exam-scores`"
                 >
-                  <q-icon name="mdi-book-edit-outline" size="xl" class="q-pb-md" />
+                  <q-icon name="mdi-book-edit" size="xl" class="q-pb-md" />
                   <div class="text-subtitle2 text-weight-regular">Điểm kiểm tra</div>
                 </q-btn>
               </div>
@@ -103,9 +103,22 @@
                   class="full-width q-pa-md"
                   no-wrap
                   no-caps
+                  :to="`/grades/${currentUser.current_grade?.code}/schedules`"
+                >
+                  <q-icon name="mdi-calendar" size="xl" class="q-pb-md" />
+                  <div class="text-subtitle2 text-weight-regular">Lịch sinh hoạt</div>
+                </q-btn>
+              </div>
+              <div class="col-4">
+                <q-btn
+                  flat
+                  stack
+                  class="full-width q-pa-md"
+                  no-wrap
+                  no-caps
                   :to="`/grades/${currentUser.current_grade?.code}/exams`"
                 >
-                  <q-icon name="mdi-book-multiple-outline" size="xl" class="q-pb-md" />
+                  <q-icon name="mdi-book-multiple" size="xl" class="q-pb-md" />
                   <div class="text-subtitle2 text-weight-regular">Bài kiểm tra</div>
                 </q-btn>
               </div>

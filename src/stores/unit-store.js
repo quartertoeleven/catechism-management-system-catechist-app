@@ -85,6 +85,7 @@ export const useUnitStore = defineStore('unit', () => {
 
   const resetUnitDetails = () => {
     unitDetails.value = {}
+    unitAttendanceStatistics.value = []
   }
 
   const updateStudentExamScore = async (studentCode, examId, score) => {

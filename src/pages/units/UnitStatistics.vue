@@ -12,15 +12,16 @@
       table-header-class="bg-grey-3"
       wrap-cells
       dense
+      no-data-label="Không có dữ liệu"
+      focusable
     >
       <template v-slot:body="props">
-        <q-tr :props="props" @click="props.expand = !props.expand">
+        <q-tr :props="props" @click="props.expand = !props.expand" style="cursor: pointer">
           <q-td auto-width style="padding-right: unset; padding-left: 0.5rem">
             <q-btn
               size="sm"
               flat
               dense
-              @click="props.expand = !props.expand"
               :icon="props.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"
             />
           </q-td>
@@ -190,7 +191,17 @@ const columns = [
     required: true,
     label: 'Hiện diện',
     align: 'left',
+    field: 'attendance_data',
     sortable: true,
+    sort: (a, b) => {
+      const totalPresentA =
+        a.filter((item) => item.mass_status === 'present').length +
+        a.filter((item) => item.lesson_status === 'present').length
+      const totalPresentB =
+        b.filter((item) => item.mass_status === 'present').length +
+        b.filter((item) => item.lesson_status === 'present').length
+      return totalPresentA - totalPresentB
+    },
   },
 ]
 
