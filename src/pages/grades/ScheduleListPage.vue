@@ -14,6 +14,7 @@
           icon="mdi-plus"
           label="Thêm ngày sinh hoạt"
           class="full-height full-width"
+          @click="gradeScheduleDetailsModalRef.open()"
         />
       </div>
     </div>
@@ -58,16 +59,26 @@
       </q-item>
     </q-list>
   </div>
+
+  <GradeScheduleDetailsModal
+    ref="gradeScheduleDetailsModalRef"
+    :gradeCode="gradeDetails.code"
+    @closeOnSaveSuccess="() => fetchGradeSchedules(gradeDetails.code)"
+  />
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { date } from 'quasar'
+import { storeToRefs } from 'pinia'
+
+import { dateLocales } from 'src/helpers/constants'
 
 import { useAppStore } from 'src/stores/app-store'
 import { useGradeStore } from 'src/stores/grade-store'
-import { storeToRefs } from 'pinia'
+
+import GradeScheduleDetailsModal from './modals/GradeScheduleDetailsModal.vue'
 
 const appStore = useAppStore()
 const gradeStore = useGradeStore()
@@ -76,11 +87,8 @@ const router = useRouter()
 const { setPageSubtitle, setPageTitle } = appStore
 const { fetchGradeSchedules } = gradeStore
 
+const gradeScheduleDetailsModalRef = ref(null)
 const { gradeSchedules, gradeDetails } = storeToRefs(gradeStore)
-
-const dateLocales = {
-  days: ['Chúa Nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ Năm', 'Thứ sáu', 'Thứ bảy'],
-}
 
 onMounted(async () => {
   await fetchGradeSchedules(router.currentRoute.value.params.grade_code)

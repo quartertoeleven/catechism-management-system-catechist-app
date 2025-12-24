@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getGradeExams, getGradeSchedule } from '../services/grade-service'
+import { getGradeExams, getGradeSchedule, createOrUpdateSchedule } from '../services/grade-service'
 import { createOrUpdateExam, deleteExam } from '../services/exam-service'
 
 export const useGradeStore = defineStore('grade', () => {
@@ -29,6 +29,10 @@ export const useGradeStore = defineStore('grade', () => {
     gradeSchedules.value = result.data.data.schedules
   }
 
+  const createOrUpdateGradeSchedule = async (grade_code, schedule_data) => {
+    await createOrUpdateSchedule(grade_code, schedule_data)
+  }
+
   return {
     gradeDetails,
     gradeExams,
@@ -37,5 +41,6 @@ export const useGradeStore = defineStore('grade', () => {
     deleteGradeExam,
     gradeSchedules,
     fetchGradeSchedules,
+    createOrUpdateGradeSchedule,
   }
 })

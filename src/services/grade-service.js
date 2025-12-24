@@ -7,3 +7,7 @@ export const getGradeSchedule = (grade_code) => {
 export const getGradeExams = (grade_code) => {
   return api.get(`/grades/${grade_code}/exams`)
 }
+
+export const createOrUpdateSchedule = (grade_code, data) => {
+  return api.post(`/grades/${grade_code}/schedules`, data)
+}
