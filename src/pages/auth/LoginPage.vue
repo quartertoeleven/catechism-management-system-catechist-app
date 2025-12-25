@@ -65,6 +65,6 @@ const loginFormData = ref({
 
 const handleLogin = async () => {
   await login(loginFormData.value.username, loginFormData.value.password)
-  router.push({ name: 'home' })
+  router.replace({ name: 'home' })
 }
 </script>
