@@ -87,7 +87,7 @@ onMounted(async () => {
 const deleteExam = async (exam) => {
   const confirmationDialog = $q.dialog({
     title: 'Xóa bài kiểm tra',
-    message: `<p>Bạn có chắc muốn xóa bài kiểm tra <b>${sanitizeHtml(exam.name)}</b> không? </p> Toàn bộ dữ liệu về điểm số của bài kiểm tra này cũng sẽ bị xóa.`,
+    message: `<p>Bạn có chắc muốn xóa bài kiểm tra <b>${sanitizeHtml(exam.name)}</b> không? </p> <b class="text-negative"><i>Toàn bộ dữ liệu về điểm số của bài kiểm tra này cũng sẽ bị xóa.</i></b>`,
     html: true,
     ok: {
       label: 'Đồng ý xóa',

@@ -71,7 +71,12 @@
                   :key="`${props.row.code}-${attendance_entry.date}`"
                 >
                   <td class="text-left">
-                    {{ date.formatDate(attendance_entry.date, 'DD/MM/YYYY') }}
+                    <div class="text-caption text-grey-8">
+                      {{ date.formatDate(attendance_entry.date, 'dddd', dateLocales) }}
+                    </div>
+                    <div>
+                      {{ date.formatDate(attendance_entry.date, 'DD/MM/YYYY', dateLocales) }}
+                    </div>
                   </td>
                   <td class="text-center">
                     <q-chip
@@ -167,6 +172,7 @@ import { date } from 'quasar'
 
 import { useAppStore } from 'src/stores/app-store'
 import { useUnitStore } from 'src/stores/unit-store'
+import { dateLocales } from 'src/helpers/constants'
 
 const unitStore = useUnitStore()
 const appStore = useAppStore()
@@ -208,7 +214,7 @@ const columns = [
 onMounted(async () => {
   resetUnitDetails()
   await unitStore.fetchUnitAttendanceStatistic(router.currentRoute.value.params.unit_code)
-  setPageTitle('Thống kê')
+  setPageTitle('Thống kê chuyên cần')
   setPageSubtitle(unitDetails.value.name)
 })
 

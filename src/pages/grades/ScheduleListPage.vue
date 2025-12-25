@@ -20,7 +20,13 @@
     </div>
 
     <q-list bordered separator>
-      <q-item clickable v-ripple v-for="schedule in gradeSchedules || []" :key="schedule.id">
+      <q-item
+        clickable
+        v-ripple
+        v-for="schedule in gradeSchedules || []"
+        :key="schedule.id"
+        @click="openGradeScheduleForEdit(schedule)"
+      >
         <q-item-section>
           <q-item-label
             class="text-caption ellipsis"
@@ -46,7 +52,7 @@
           <q-btn flat round color="" icon="mdi-dots-horizontal" dense @click.prevent.stop="">
             <q-menu>
               <q-list style="min-width: 30vw">
-                <q-item clickable v-close-popup v-ripple>
+                <q-item clickable v-close-popup v-ripple @click="deleteGradeSchedule(schedule)">
                   <q-item-section avatar>
                     <q-icon color="negative" name="mdi-delete" />
                   </q-item-section>
@@ -63,6 +69,8 @@
   <GradeScheduleDetailsModal
     ref="gradeScheduleDetailsModalRef"
     :gradeCode="gradeDetails.code"
+    :scheduleId="selectedScheduleId"
+    @hide="selectedScheduleId = null"
     @closeOnSaveSuccess="() => fetchGradeSchedules(gradeDetails.code)"
   />
 </template>
@@ -70,7 +78,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { date } from 'quasar'
+import { date, useQuasar } from 'quasar'
 import { storeToRefs } from 'pinia'
 
 import { dateLocales } from 'src/helpers/constants'
@@ -80,15 +88,48 @@ import { useGradeStore } from 'src/stores/grade-store'
 
 import GradeScheduleDetailsModal from './modals/GradeScheduleDetailsModal.vue'
 
+const $q = useQuasar()
 const appStore = useAppStore()
 const gradeStore = useGradeStore()
 const router = useRouter()
 
 const { setPageSubtitle, setPageTitle } = appStore
-const { fetchGradeSchedules } = gradeStore
+const { fetchGradeSchedules, removeGradeSchedule } = gradeStore
 
 const gradeScheduleDetailsModalRef = ref(null)
 const { gradeSchedules, gradeDetails } = storeToRefs(gradeStore)
+const selectedScheduleId = ref(null)
+
+const openGradeScheduleForEdit = (schedule) => {
+  selectedScheduleId.value = schedule.id
+  gradeScheduleDetailsModalRef.value.open()
+}
+
+const deleteGradeSchedule = async (schedule) => {
+  const confirmationDialog = $q.dialog({
+    title: 'Xóa lịch sinh hoạt',
+    message: `<p>Bạn có chắc muốn xóa lịch sinh hoạt của ngày <b>${date.formatDate(schedule.date, 'dddd - DD/MM/YYYY', dateLocales)}</b> không? </p> <b class="text-negative"><i>Toàn bộ dữ liệu điểm danh của ngày sinh hoạt này cũng sẽ bị xóa.<i/></b>`,
+    html: true,
+    ok: {
+      label: 'Đồng ý xóa',
+      flat: true,
+      color: 'negative',
+      icon: 'mdi-delete',
+    },
+    cancel: {
+      label: 'Hủy',
+      flat: true,
+      color: 'grey-14',
+      icon: 'mdi-close',
+    },
+    focus: 'cancel',
+  })
+
+  confirmationDialog.onOk(async () => {
+    await removeGradeSchedule(gradeDetails.value.code, schedule.id)
+    await fetchGradeSchedules(gradeDetails.value.code)
+  })
+}
 
 onMounted(async () => {
   await fetchGradeSchedules(router.currentRoute.value.params.grade_code)

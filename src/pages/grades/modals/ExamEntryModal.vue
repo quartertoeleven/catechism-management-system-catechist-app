@@ -8,14 +8,13 @@
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <q-form class="q-gutter-y-xs" @submit.prevent="onSave" id="examEntryForm">
+        <q-form class="q-gutter-y-xs" @submit.prevent="onSave" id="examEntryForm" greedy>
           <q-input
             ref="examEntryFormDataValidations.refs.nameRef"
             class="full-width"
             outlined
             label="Tên bài kiểm tra *"
             v-model="examEntryFormData.name"
-            lazy-rules
             :rules="examEntryFormDataValidations.rules.name"
             autofocus
           />
@@ -28,7 +27,6 @@
                 label="Hệ số *"
                 type="number"
                 v-model="examEntryFormData.factor"
-                lazy-rules
                 :rules="examEntryFormDataValidations.rules.factor"
               />
             </div>

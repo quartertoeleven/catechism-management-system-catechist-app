@@ -161,6 +161,7 @@ import { useRouter } from 'vue-router'
 import { date } from 'quasar'
 
 import QRAttendanceCheckModal from './modals/QRAttendanceCheckModal.vue'
+import { dateLocales } from 'src/helpers/constants'
 
 const attendanceOptions = [
   {
@@ -208,7 +209,7 @@ onMounted(async () => {
 const populateUnitScheduleOptions = () => {
   const populatedDateOptions = unitSchedules.value.map((schedule) => {
     const option = {
-      label: date.formatDate(schedule.date, 'DD/MM/YYYY'),
+      label: date.formatDate(schedule.date, 'dddd - DD/MM/YYYY', dateLocales),
       value: schedule.id,
       raw_data: {
         is_lesson_check: schedule.is_lesson_attendance_check,
