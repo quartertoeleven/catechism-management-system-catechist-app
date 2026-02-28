@@ -7,6 +7,7 @@
         class=""
         clickable
         v-ripple
+        :to="`/students/${student.code}`"
       >
         <q-item-section avatar>
           <q-avatar color="primary" text-color="white"> </q-avatar>

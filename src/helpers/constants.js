@@ -14,6 +14,17 @@ const scoreOptions = [
   4.5, 4.3, 4, 3.8, 3.5, 3.3, 3, 2.8, 2.5, 2.3, 2, 1.8, 1.5, 1.3, 1, 0.8, 0.5, 0,
 ]
 
+const genderOptions = [
+  {
+    label: 'Nam',
+    value: 'male',
+  },
+  {
+    label: 'Nữ',
+    value: 'female',
+  },
+]
+
 const dateLocales = {
   days: ['Chúa Nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ Năm', 'Thứ sáu', 'Thứ bảy'],
   daysShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
@@ -47,4 +58,4 @@ const dateLocales = {
   ],
 }
 
-export { dateLocales, scoreOptions, semesterOptions }
+export { dateLocales, scoreOptions, semesterOptions, genderOptions }
