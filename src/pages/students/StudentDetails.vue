@@ -162,51 +162,60 @@
         </q-card-section>
         <q-card-section class="q-pt-none q-gutter-y-md">
           <q-list bordered separator>
-            <q-item clickable v-ripple>
-              <q-item-section side>
-                <q-icon name="mdi-phone" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Điện thoại</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-item-label>0909xxxxxx</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-ripple>
-              <q-item-section side>
-                <q-icon name="mdi-email" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Email</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-item-label>0909xxxxxx</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-ripple>
-              <q-item-section side>
-                <q-icon name="mdi-phone" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Điện thoại</q-item-label>
-                <q-item-label caption>Bố</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-item-label>0909xxxxxx</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-ripple>
-              <q-item-section side>
-                <q-icon name="mdi-phone" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Điện thoại</q-item-label>
-                <q-item-label caption>Mẹ</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-item-label>0909xxxxxx</q-item-label>
-              </q-item-section>
+            <q-item :clickable="!contact.isEdit" v-for="contact in contactList" :key="contact.frontend_key">
+              <template v-if="!contact.isEdit">
+                <q-item-section side>
+                  <q-icon :name="contactTypeOptions.find((t) => t.value === contact.type)?.icon" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{contactTypeOptions.find((t) => t.value === contact.type)?.label}}</q-item-label>
+                  <q-item-label caption>{{contactRelationTypeOptions.find((t) => t.value ===
+                    contact.relationship)?.label
+                  }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label>{{ contact.info }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-btn flat round color="" icon="mdi-dots-horizontal" dense @click.prevent.stop="">
+                    <q-menu>
+                      <q-list>
+                        <q-item clickable v-close-popup v-ripple @click="enableEditContact(contact)">
+                          <q-item-section avatar>
+                            <q-icon color="" name="mdi-pencil" />
+                          </q-item-section>
+                          <q-item-section>Chỉnh sửa</q-item-section>
+                        </q-item>
+                        <q-item clickable v-close-popup v-ripple>
+                          <q-item-section avatar>
+                            <q-icon color="negative" name="mdi-delete" />
+                          </q-item-section>
+                          <q-item-section>Xóa</q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-btn>
+                </q-item-section>
+              </template>
+              <template v-else>
+                <q-item-section>
+                  <div class="q-pt-md q-gutter-sm">
+                    <q-form class="q-gutter-y-md" :id="`contactForm-${contact.frontend_key}`" @submit.prevent="">
+                      <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined :options="contactTypeOptions"
+                        map-options emit-value v-model="contact.type" label="Phương thức" />
+                      <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined clearable
+                        :options="contactRelationTypeOptions" map-options emit-value v-model="contact.relationship"
+                        label="Quan hệ với học viên" hint="Để trống nếu là thông tin của chính học viên" />
+                      <q-input class="full-width" outlined label="Chi tiết" type="text" v-model="contact.info" />
+                      <div class="q-gutter-x-sm row justify-end">
+                        <q-btn color="negative" icon="mdi-cancel" label="Hủy" @click="contact.isEdit = false" />
+                        <q-btn color="primary" icon="save" label="Lưu" />
+                      </div>
+                    </q-form>
+
+                  </div>
+                </q-item-section>
+              </template>
             </q-item>
           </q-list>
         </q-card-section>
@@ -221,7 +230,7 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { date } from 'quasar'
 
-import { genderOptions, dateLocales } from 'src/helpers/constants'
+import { genderOptions, dateLocales, contactTypeOptions, contactRelationTypeOptions } from 'src/helpers/constants'
 import { useStudentStore } from 'src/stores/student-store'
 import { useAppStore } from 'stores/app-store'
 
@@ -275,6 +284,8 @@ const addressFormData = ref({
   old_address_line_2: ''
 })
 
+const contactList = ref([])
+
 onMounted(async () => {
   await fetchStudentInfo(router.currentRoute.value.params.student_code)
   setPageTitle('Thông tin học viên')
@@ -282,7 +293,7 @@ onMounted(async () => {
   populateGeneralInfoFormData()
   populateParentInfoFormData()
   populateAddressFormData()
-
+  populateContactList()
 })
 
 const populateGeneralInfoFormData = () => {
@@ -327,6 +338,18 @@ const populateAddressFormData = () => {
   addressFormData.value.address_line_2 = studentDetails.value.address.address_line_2
   addressFormData.value.old_address_line_1 = studentDetails.value.address.old_address_line_1
   addressFormData.value.old_address_line_2 = studentDetails.value.address.old_address_line_2
+}
+
+const populateContactList = () => {
+  contactList.value = [...studentDetails.value.contacts]
+  for (const contact of contactList.value) {
+    contact.frontend_key = crypto.randomUUID()
+    contact.isEdit = false
+  }
+}
+
+const enableEditContact = (contact) => {
+  contact.isEdit = true
 }
 
 const handleBasicAndSacramentsInfoFormSubmit = async () => {
