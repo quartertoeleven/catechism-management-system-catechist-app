@@ -212,7 +212,7 @@
                         :options="contactRelationTypeOptions" map-options emit-value v-model="contact.relationship"
                         label="Quan hệ với học viên" hint="Để trống nếu là thông tin của chính học viên" />
                       <q-input class="full-width" outlined label="Chi tiết" type="text" v-model="contact.info" />
-                      <div class="q-gutter-x-sm row justify-end">
+                      <div class="q-gutter-x-sm q-pb-md row justify-end">
                         <q-btn color="negative" icon="mdi-cancel" label="Hủy" @click="cancelEditContact(contact)" />
                         <q-btn color="primary" icon="save" label="Lưu" type="submit" />
                       </div>
