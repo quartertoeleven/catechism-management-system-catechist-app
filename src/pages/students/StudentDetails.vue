@@ -10,23 +10,26 @@
     transition-prev="slide-right" transition-next="slide-left">
     <q-tab-panel name="basic">
       <div class="q-qa-md q-gutter-md">
-        <q-form class="q-gutter-y-md" id="studentBasicAndSacramentsInfoForm"
+        <q-form class="q-gutter-y-md" id="studentBasicAndSacramentsInfoForm" ref="generalInfoFormRef"
           @submit.prevent="handleBasicAndSacramentsInfoFormSubmit()">
           <q-card class="bg-grey-1" flat bordered>
             <q-card-section>
               <div class="text-subtitle2">Thông tin chung</div>
             </q-card-section>
             <q-card-section class="q-pt-none q-gutter-y-md">
-              <q-input class="full-width" outlined readonly label="Mã học viên" type="text"
+              <q-input class="full-width" outlined readonly label="Mã học viên *" type="text"
                 v-model="generalInfoFormData.basic.code" />
-              <q-input class="full-width" outlined label="Tên Thánh" type="text"
-                v-model="generalInfoFormData.basic.saint_name" />
-              <q-input class="full-width" outlined label="Họ" type="text"
-                v-model="generalInfoFormData.basic.last_name" />
-              <q-input class="full-width" outlined label="Tên đệm" type="text"
+              <q-input class="full-width" outlined label="Tên Thánh *" type="text" maxlength="30"
+                ref="generalInfoFormValidations.refs.saintName" :rules="generalInfoFormValidations.rules.saintName"
+                hide-bottom-space v-model="generalInfoFormData.basic.saint_name" />
+              <q-input class="full-width" outlined label="Họ *" type="text" maxlength="20"
+                ref="generalInfoFormValidations.refs.lastName" :rules="generalInfoFormValidations.rules.lastName"
+                v-model="generalInfoFormData.basic.last_name" hide-bottom-space />
+              <q-input class="full-width" outlined label="Tên đệm" type="text" maxlength="30"
                 v-model="generalInfoFormData.basic.middle_name" />
-              <q-input class="full-width" outlined label="Tên" type="text"
-                v-model="generalInfoFormData.basic.first_name" />
+              <q-input class="full-width" outlined label="Tên *" type="text" maxlength="30"
+                v-model="generalInfoFormData.basic.first_name" ref="generalInfoFormValidations.refs.firstName"
+                :rules="generalInfoFormValidations.rules.firstName" hide-bottom-space />
               <div class="row q-gutter-x-md">
                 <div class="col">
                   <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined :options="genderOptions"
@@ -205,13 +208,16 @@
                 <q-item-section>
                   <div class="q-pt-md q-gutter-sm">
                     <q-form class="q-gutter-y-md" :id="`contactForm-${contact.frontend_key}`"
-                      @submit.prevent="handleSaveContact(contact)">
+                      @submit.prevent="handleSaveContact(contact)" ref="contactFormRef">
                       <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined :options="contactTypeOptions"
-                        map-options emit-value v-model="contact.type" label="Phương thức" />
+                        map-options emit-value v-model="contact.type" label="Phương thức *" hide-bottom-space
+                        ref="contactFormValidation.refs.type" :rules="contactFormValidation.rules.type" />
                       <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined clearable
                         :options="contactRelationTypeOptions" map-options emit-value v-model="contact.relationship"
                         label="Quan hệ với học viên" hint="Để trống nếu là thông tin của chính học viên" />
-                      <q-input class="full-width" outlined label="Chi tiết" type="text" v-model="contact.info" />
+                      <q-input class="full-width" outlined label="Chi tiết *" type="text" v-model="contact.info"
+                        maxlength="40" hide-bottom-space ref="contactFormValidation.refs.info"
+                        :rules="contactFormValidation.rules.info" />
                       <div class="q-gutter-x-sm q-pb-md row justify-end">
                         <q-btn color="negative" icon="mdi-cancel" label="Hủy" @click="cancelEditContact(contact)" />
                         <q-btn color="primary" icon="save" label="Lưu" type="submit" />
@@ -258,6 +264,8 @@ const { fetchStudentInfo, updateStudentInfo, createOrUpdateContacts, deleteConta
 const dobSelectionPopup = ref(null)
 const baptismDateSelectionPopup = ref(null)
 const confirmationDateSelectionPopup = ref(null)
+const generalInfoFormRef = ref(null)
+const contactFormRef = ref(null)
 
 const generalInfoFormData = ref({
   basic: {
@@ -279,6 +287,21 @@ const generalInfoFormData = ref({
   }
 })
 
+const generalInfoFormValidations = {
+  refs: {
+    saintName: ref(null),
+    firstName: ref(null),
+    lastName: ref(null)
+  },
+  rules: {
+    saintName: [
+      (val) => (val && val.length > 0) || 'Vui lòng nhập tên thánh'
+    ],
+    firstName: [(val) => (val && val.length > 0) || 'Vui lòng nhập tên'],
+    lastName: [(val) => (val && val.length > 0) || 'Vui lòng nhập họ'],
+  }
+}
+
 const parentInfoFormData = ref({
   father_saint_name: '',
   father_full_name: '',
@@ -296,6 +319,19 @@ const addressFormData = ref({
 })
 
 const contactList = ref([])
+
+const contactFormValidation = {
+  refs: {
+    type: ref(null),
+    info: ref(null),
+  },
+  rules: {
+    type: [
+      (val) => (val && val.length > 0) || 'Vui lòng chọn loại liên lạc'
+    ],
+    info: [(val) => (val && val.length > 0) || 'Vui lòng nhập thông tin liên lạc'],
+  }
+}
 
 onMounted(async () => {
   await fetchStudentInfo(router.currentRoute.value.params.student_code)
@@ -391,6 +427,12 @@ const cancelEditContact = (contact) => {
 }
 
 const handleBasicAndSacramentsInfoFormSubmit = async () => {
+
+  const validationResult = await generalInfoFormRef.value.validate()
+  if (!validationResult) {
+    return
+  }
+
   const basic_data = { ...generalInfoFormData.value.basic }
   const sacraments_data = { ...generalInfoFormData.value.sacraments }
 
