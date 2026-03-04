@@ -435,7 +435,6 @@ const handleAddressFormSubmit = async () => {
 }
 
 const handleSaveContact = async (updatedContact) => {
-  console.log(updatedContact)
   const contactData = {
     id: updatedContact.id,
     type: updatedContact.type,

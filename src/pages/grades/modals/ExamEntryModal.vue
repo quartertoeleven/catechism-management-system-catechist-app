@@ -9,39 +9,18 @@
 
       <q-card-section class="q-pt-none">
         <q-form class="q-gutter-y-xs" @submit.prevent="onSave" id="examEntryForm" greedy>
-          <q-input
-            ref="examEntryFormDataValidations.refs.nameRef"
-            class="full-width"
-            outlined
-            label="Tên bài kiểm tra *"
-            v-model="examEntryFormData.name"
-            :rules="examEntryFormDataValidations.rules.name"
-            autofocus
-          />
+          <q-input ref="examEntryFormDataValidations.refs.nameRef" class="full-width" outlined
+            label="Tên bài kiểm tra *" v-model="examEntryFormData.name" :rules="examEntryFormDataValidations.rules.name"
+            autofocus />
           <div class="row q-gutter-x-md">
             <div class="col">
-              <q-input
-                ref="examEntryFormDataValidations.refs.factorRef"
-                class="full-width"
-                outlined
-                label="Hệ số *"
-                type="number"
-                v-model="examEntryFormData.factor"
-                :rules="examEntryFormDataValidations.rules.factor"
-              />
+              <q-input ref="examEntryFormDataValidations.refs.factorRef" class="full-width" outlined label="Hệ số *"
+                type="number" v-model="examEntryFormData.factor" :rules="examEntryFormDataValidations.rules.factor" />
             </div>
             <div class="col">
-              <q-select
-                ref="examEntryFormDataValidations.refs.semesterRef"
-                dropdown-icon="mdi-menu-down"
-                outlined
-                :options="semesterOptions"
-                map-options
-                emit-value
-                v-model="examEntryFormData.semester"
-                label="Học kì *"
-                :rules="examEntryFormDataValidations.rules.semester"
-              />
+              <q-select ref="examEntryFormDataValidations.refs.semesterRef" dropdown-icon="mdi-menu-down" outlined
+                :options="semesterOptions" map-options emit-value v-model="examEntryFormData.semester" label="Học kì *"
+                :rules="examEntryFormDataValidations.rules.semester" />
             </div>
           </div>
         </q-form>
@@ -49,14 +28,8 @@
 
       <q-card-actions align="right">
         <q-btn flat label="Hủy" icon="mdi-close-circle" color="negative" v-close-popup />
-        <q-btn
-          flat
-          type="submit"
-          form="examEntryForm"
-          :label="isEditMode ? 'Cập nhật' : 'Tạo mới'"
-          icon="mdi-content-save"
-          color="primary"
-        />
+        <q-btn flat type="submit" form="examEntryForm" :label="isEditMode ? 'Cập nhật' : 'Tạo mới'"
+          icon="mdi-content-save" color="primary" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -100,7 +73,6 @@ const examEntryFormDataValidations = {
     ],
     semester: [
       (val) => {
-        console.log(val)
         return !!val || 'Vui lòng chọn học kì'
       },
     ],
