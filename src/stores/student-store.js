@@ -2,7 +2,12 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { Notify } from 'quasar'
 
-import { getStudentDetails, updateStudentDetails } from '../services/student-service'
+import {
+  getStudentDetails,
+  updateStudentDetails,
+  createOrUpdateStudentContacts,
+  deleteStudentContacts,
+} from '../services/student-service'
 
 export const useStudentStore = defineStore('student', () => {
   const studentDetails = ref({})
@@ -27,9 +32,34 @@ export const useStudentStore = defineStore('student', () => {
     }
   }
 
+  const createOrUpdateContacts = async (student_code, contact_info) => {
+    const result = await createOrUpdateStudentContacts(student_code, contact_info)
+    if (result.data.success) {
+      Notify.create({
+        type: 'positive',
+        message: result.data.message,
+        position: 'top-right',
+        group: false,
+        timeout: 4000,
+        progress: true,
+        icon: 'mdi-check',
+      })
+      studentDetails.value.contacts = result.data.data
+    }
+  }
+
+  const deleteContact = async (student_code, contact_id) => {
+    const result = await deleteStudentContacts(student_code, contact_id)
+    if (result.data.success) {
+      studentDetails.value.contacts = result.data.data
+    }
+  }
+
   return {
     studentDetails,
     fetchStudentInfo,
     updateStudentInfo,
+    createOrUpdateContacts,
+    deleteContact,
   }
 })

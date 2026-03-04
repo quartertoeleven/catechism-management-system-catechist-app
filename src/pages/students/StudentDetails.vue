@@ -3,7 +3,7 @@
     <q-tab name="basic" icon="mdi-information" label="Lý lịch" />
     <q-tab name="parent" icon="mdi-human-male-female-child" label="Phụ huynh" />
     <q-tab name="contact" icon="mdi-contacts" label="Liên lạc" />
-    <q-tab name="result" icon="mdi-school" label="Học tập" />
+    <!-- <q-tab name="result" icon="mdi-school" label="Học tập" /> -->
   </q-tabs>
 
   <q-tab-panels style="height: calc(100vh - 8rem)" class="bg-grey-1" v-model="currentTab" animated swipeable
@@ -156,27 +156,31 @@
         </q-card>
       </q-form>
 
-      <q-card class="my-card q-mt-md" flat bordered>
+      <q-card class="my-card q-mt-md bg-grey-1" flat bordered>
         <q-card-section>
-          <div class="text-subtitle2">Thông tin liên lạc</div>
+          <div class="row justify-between items-center">
+            <div class="text-subtitle2">Thông tin liên lạc</div>
+            <q-btn color="primary" icon="mdi-plus" label="Thêm mới" size="md" @click="addNewContact()"
+              :disable="!!contactList.find((c) => c.isEdit)" />
+          </div>
+
         </q-card-section>
         <q-card-section class="q-pt-none q-gutter-y-md">
-          <q-list bordered separator>
+          <q-list bordered separator v-if="contactList.length > 0">
             <q-item :clickable="!contact.isEdit" v-for="contact in contactList" :key="contact.frontend_key">
               <template v-if="!contact.isEdit">
                 <q-item-section side>
                   <q-icon :name="contactTypeOptions.find((t) => t.value === contact.type)?.icon" />
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{contactTypeOptions.find((t) => t.value === contact.type)?.label}}</q-item-label>
-                  <q-item-label caption>{{contactRelationTypeOptions.find((t) => t.value ===
-                    contact.relationship)?.label
-                  }}</q-item-label>
-                </q-item-section>
-                <q-item-section side>
                   <q-item-label>{{ contact.info }}</q-item-label>
+                  <q-item-label caption>{{contactTypeOptions.find((t) => t.value === contact.type)?.label}} {{
+                    contact.relationship ? '-' : '' }}
+                    {{contactRelationTypeOptions.find((t) => t.value ===
+                      contact.relationship)?.label
+                    }}</q-item-label>
                 </q-item-section>
-                <q-item-section side>
+                <q-item-section side v-if="!contactList.find((c) => c.isEdit)">
                   <q-btn flat round color="" icon="mdi-dots-horizontal" dense @click.prevent.stop="">
                     <q-menu>
                       <q-list>
@@ -186,7 +190,7 @@
                           </q-item-section>
                           <q-item-section>Chỉnh sửa</q-item-section>
                         </q-item>
-                        <q-item clickable v-close-popup v-ripple>
+                        <q-item clickable v-close-popup v-ripple @click="handleRemoveContact(contact)">
                           <q-item-section avatar>
                             <q-icon color="negative" name="mdi-delete" />
                           </q-item-section>
@@ -200,7 +204,8 @@
               <template v-else>
                 <q-item-section>
                   <div class="q-pt-md q-gutter-sm">
-                    <q-form class="q-gutter-y-md" :id="`contactForm-${contact.frontend_key}`" @submit.prevent="">
+                    <q-form class="q-gutter-y-md" :id="`contactForm-${contact.frontend_key}`"
+                      @submit.prevent="handleSaveContact(contact)">
                       <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined :options="contactTypeOptions"
                         map-options emit-value v-model="contact.type" label="Phương thức" />
                       <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined clearable
@@ -208,8 +213,8 @@
                         label="Quan hệ với học viên" hint="Để trống nếu là thông tin của chính học viên" />
                       <q-input class="full-width" outlined label="Chi tiết" type="text" v-model="contact.info" />
                       <div class="q-gutter-x-sm row justify-end">
-                        <q-btn color="negative" icon="mdi-cancel" label="Hủy" @click="contact.isEdit = false" />
-                        <q-btn color="primary" icon="save" label="Lưu" />
+                        <q-btn color="negative" icon="mdi-cancel" label="Hủy" @click="cancelEditContact(contact)" />
+                        <q-btn color="primary" icon="save" label="Lưu" type="submit" />
                       </div>
                     </q-form>
 
@@ -218,6 +223,11 @@
               </template>
             </q-item>
           </q-list>
+          <div class="row" v-else>
+            <div class="text-center full-width text-subtitle">
+              (chưa có thông tin)
+            </div>
+          </div>
         </q-card-section>
       </q-card>
     </q-tab-panel>
@@ -228,7 +238,7 @@
 import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { date } from 'quasar'
+import { date, useQuasar } from 'quasar'
 
 import { genderOptions, dateLocales, contactTypeOptions, contactRelationTypeOptions } from 'src/helpers/constants'
 import { useStudentStore } from 'src/stores/student-store'
@@ -239,10 +249,11 @@ const currentTab = ref('basic')
 const appStore = useAppStore()
 const studentStore = useStudentStore()
 const router = useRouter()
+const $q = useQuasar()
 
 const { setPageSubtitle, setPageTitle } = appStore
 const { studentDetails } = storeToRefs(studentStore)
-const { fetchStudentInfo, updateStudentInfo } = studentStore
+const { fetchStudentInfo, updateStudentInfo, createOrUpdateContacts, deleteContact } = studentStore
 
 const dobSelectionPopup = ref(null)
 const baptismDateSelectionPopup = ref(null)
@@ -348,8 +359,35 @@ const populateContactList = () => {
   }
 }
 
+const addNewContact = () => {
+  const newContact = {
+    id: null,
+    info: '',
+    type: null,
+    relationship: null,
+    frontend_key: crypto.randomUUID(),
+    isEdit: true
+  }
+  contactList.value.unshift(newContact)
+}
+
 const enableEditContact = (contact) => {
+  contact.originalInfo = { ...contact }
   contact.isEdit = true
+}
+
+const cancelEditContact = (contact) => {
+  if (contact.originalInfo) {
+    // In case of editing existing contacts
+    contact.info = contact.originalInfo.info
+    contact.relationship = contact.originalInfo.relationship
+    contact.type = contact.originalInfo.type
+    delete contact.originalInfo
+    contact.isEdit = false
+  } else {
+    // In case of cancelling the operation of adding a new contact
+    contactList.value.splice(contactList.value.indexOf(contact), 1)
+  }
 }
 
 const handleBasicAndSacramentsInfoFormSubmit = async () => {
@@ -393,6 +431,43 @@ const handleAddressFormSubmit = async () => {
 
   await updateStudentInfo(studentDetails.value.basic.code, {
     address: address_data
+  })
+}
+
+const handleSaveContact = async (updatedContact) => {
+  console.log(updatedContact)
+  const contactData = {
+    id: updatedContact.id,
+    type: updatedContact.type,
+    relationship: updatedContact.relationship,
+    info: updatedContact.info
+  }
+  await createOrUpdateContacts(studentDetails.value.basic.code, contactData)
+  populateContactList()
+}
+
+const handleRemoveContact = async (contact) => {
+  const confirmationDialog = $q.dialog({
+    title: 'Xóa liên lạc',
+    message: `Bạn có chắc muốn xóa thông tin liên lạc này không?`,
+    html: true,
+    ok: {
+      label: 'Đồng ý xóa',
+      flat: true,
+      color: 'negative',
+      icon: 'mdi-delete-outline',
+    },
+    cancel: {
+      label: 'Hủy',
+      flat: true,
+      color: 'grey-14',
+      icon: 'mdi-close',
+    },
+    focus: 'cancel',
+  })
+  confirmationDialog.onOk(async () => {
+    await deleteContact(studentDetails.value.basic.code, contact.id)
+    populateContactList()
   })
 }
 </script>
