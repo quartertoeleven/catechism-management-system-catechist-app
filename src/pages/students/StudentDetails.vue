@@ -6,42 +6,114 @@
     <!-- <q-tab name="result" icon="mdi-school" label="Học tập" /> -->
   </q-tabs>
 
-  <q-tab-panels style="height: calc(100vh - 8rem)" class="bg-grey-1" v-model="currentTab" animated swipeable
-    transition-prev="slide-right" transition-next="slide-left">
+  <q-tab-panels
+    style="height: calc(100vh - 8rem)"
+    class="bg-grey-1"
+    v-model="currentTab"
+    animated
+    swipeable
+    transition-prev="slide-right"
+    transition-next="slide-left"
+  >
     <q-tab-panel name="basic">
       <div class="q-qa-md q-gutter-md">
-        <q-form class="q-gutter-y-md" id="studentBasicAndSacramentsInfoForm" ref="generalInfoFormRef"
-          @submit.prevent="handleBasicAndSacramentsInfoFormSubmit()">
+        <q-form
+          class="q-gutter-y-md"
+          id="studentBasicAndSacramentsInfoForm"
+          ref="generalInfoFormRef"
+          @submit.prevent="handleBasicAndSacramentsInfoFormSubmit()"
+        >
           <q-card class="bg-grey-1" flat bordered>
             <q-card-section>
               <div class="text-subtitle2">Thông tin chung</div>
             </q-card-section>
             <q-card-section class="q-pt-none q-gutter-y-md">
-              <q-input class="full-width" outlined readonly label="Mã học viên *" type="text"
-                v-model="generalInfoFormData.basic.code" />
-              <q-input class="full-width" outlined label="Tên Thánh *" type="text" maxlength="30"
-                ref="generalInfoFormValidations.refs.saintName" :rules="generalInfoFormValidations.rules.saintName"
-                hide-bottom-space v-model="generalInfoFormData.basic.saint_name" />
-              <q-input class="full-width" outlined label="Họ *" type="text" maxlength="20"
-                ref="generalInfoFormValidations.refs.lastName" :rules="generalInfoFormValidations.rules.lastName"
-                v-model="generalInfoFormData.basic.last_name" hide-bottom-space />
-              <q-input class="full-width" outlined label="Tên đệm" type="text" maxlength="30"
-                v-model="generalInfoFormData.basic.middle_name" />
-              <q-input class="full-width" outlined label="Tên *" type="text" maxlength="30"
-                v-model="generalInfoFormData.basic.first_name" ref="generalInfoFormValidations.refs.firstName"
-                :rules="generalInfoFormValidations.rules.firstName" hide-bottom-space />
+              <q-input
+                class="full-width"
+                outlined
+                readonly
+                label="Mã học viên *"
+                type="text"
+                v-model="generalInfoFormData.basic.code"
+              />
+              <q-input
+                class="full-width"
+                outlined
+                label="Tên Thánh *"
+                type="text"
+                maxlength="30"
+                ref="generalInfoFormValidations.refs.saintName"
+                :rules="generalInfoFormValidations.rules.saintName"
+                hide-bottom-space
+                v-model="generalInfoFormData.basic.saint_name"
+              />
+              <q-input
+                class="full-width"
+                outlined
+                label="Họ *"
+                type="text"
+                maxlength="20"
+                ref="generalInfoFormValidations.refs.lastName"
+                :rules="generalInfoFormValidations.rules.lastName"
+                v-model="generalInfoFormData.basic.last_name"
+                hide-bottom-space
+              />
+              <q-input
+                class="full-width"
+                outlined
+                label="Tên đệm"
+                type="text"
+                maxlength="30"
+                v-model="generalInfoFormData.basic.middle_name"
+              />
+              <q-input
+                class="full-width"
+                outlined
+                label="Tên *"
+                type="text"
+                maxlength="30"
+                v-model="generalInfoFormData.basic.first_name"
+                ref="generalInfoFormValidations.refs.firstName"
+                :rules="generalInfoFormValidations.rules.firstName"
+                hide-bottom-space
+              />
               <div class="row q-gutter-x-md">
                 <div class="col">
-                  <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined :options="genderOptions"
-                    map-options emit-value v-model="generalInfoFormData.basic.gender" label="Giới tính" />
+                  <q-select
+                    class="full-width"
+                    dropdown-icon="mdi-menu-down"
+                    outlined
+                    :options="genderOptions"
+                    map-options
+                    emit-value
+                    v-model="generalInfoFormData.basic.gender"
+                    label="Giới tính"
+                  />
                 </div>
                 <div class="col">
-                  <q-input outlined v-model="generalInfoFormData.basic.date_of_birth" label="Ngày sinh" readonly>
+                  <q-input
+                    outlined
+                    v-model="generalInfoFormData.basic.date_of_birth"
+                    label="Ngày sinh"
+                    readonly
+                  >
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer">
-                        <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="dobSelectionPopup">
-                          <q-date v-model="generalInfoFormData.basic.date_of_birth" today-btn minimal no-unset
-                            mask="DD/MM/YYYY" :locale="dateLocales" @update:model-value="dobSelectionPopup.hide()">
+                        <q-popup-proxy
+                          cover
+                          transition-show="scale"
+                          transition-hide="scale"
+                          ref="dobSelectionPopup"
+                        >
+                          <q-date
+                            v-model="generalInfoFormData.basic.date_of_birth"
+                            today-btn
+                            minimal
+                            no-unset
+                            mask="DD/MM/YYYY"
+                            :locale="dateLocales"
+                            @update:model-value="dobSelectionPopup.hide()"
+                          >
                           </q-date>
                         </q-popup-proxy>
                       </q-icon>
@@ -56,62 +128,135 @@
               <div class="text-subtitle2">Thông tin Rửa Tội và Thêm Sức</div>
             </q-card-section>
             <q-card-section class="q-pt-none q-gutter-y-md">
-              <q-toggle label="Đã được Rửa Tội" v-model="generalInfoFormData.sacraments.is_baptized" />
-              <q-input outlined v-model="generalInfoFormData.sacraments.baptism_date" label="Ngày Rửa Tội" readonly
-                :disable="!generalInfoFormData.sacraments.is_baptized">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale"
-                      ref="baptismDateSelectionPopup">
-                      <q-date v-model="generalInfoFormData.sacraments.baptism_date" today-btn minimal no-unset
-                        mask="DD/MM/YYYY" :locale="dateLocales" @update:model-value="baptismDateSelectionPopup.hide()">
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-              <q-input class="full-width" outlined label="Nơi Rửa Tội" type="text"
+              <q-toggle
+                label="Đã được Rửa Tội"
+                v-model="generalInfoFormData.sacraments.is_baptized"
+              />
+              <q-input
+                outlined
+                v-model="generalInfoFormData.sacraments.baptism_date"
+                label="Ngày Rửa Tội"
+                readonly
                 :disable="!generalInfoFormData.sacraments.is_baptized"
-                v-model="generalInfoFormData.sacraments.baptism_place" />
-              <q-toggle label="Đã lãnh nhận Bí Tích Thêm Sức" v-model="generalInfoFormData.sacraments.is_confirmed" />
-              <q-input outlined v-model="generalInfoFormData.sacraments.confirmation_date" label="Ngày Thêm Sức"
-                :disable="!generalInfoFormData.sacraments.is_confirmed" readonly>
+              >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale"
-                      ref="confirmationDateSelectionPopup">
-                      <q-date v-model="generalInfoFormData.sacraments.confirmation_date" today-btn minimal no-unset
-                        mask="DD/MM/YYYY" :locale="dateLocales"
-                        @update:model-value="confirmationDateSelectionPopup.hide()">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                      ref="baptismDateSelectionPopup"
+                    >
+                      <q-date
+                        v-model="generalInfoFormData.sacraments.baptism_date"
+                        today-btn
+                        minimal
+                        no-unset
+                        mask="DD/MM/YYYY"
+                        :locale="dateLocales"
+                        @update:model-value="baptismDateSelectionPopup.hide()"
+                      >
                       </q-date>
                     </q-popup-proxy>
                   </q-icon>
                 </template>
               </q-input>
-              <q-input class="full-width" outlined label="Nơi Thêm Sức" type="text"
+              <q-input
+                class="full-width"
+                outlined
+                label="Nơi Rửa Tội"
+                type="text"
+                :disable="!generalInfoFormData.sacraments.is_baptized"
+                v-model="generalInfoFormData.sacraments.baptism_place"
+              />
+              <q-toggle
+                label="Đã lãnh nhận Bí Tích Thêm Sức"
+                v-model="generalInfoFormData.sacraments.is_confirmed"
+              />
+              <q-input
+                outlined
+                v-model="generalInfoFormData.sacraments.confirmation_date"
+                label="Ngày Thêm Sức"
                 :disable="!generalInfoFormData.sacraments.is_confirmed"
-                v-model="generalInfoFormData.sacraments.confirmation_place" />
+                readonly
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                      ref="confirmationDateSelectionPopup"
+                    >
+                      <q-date
+                        v-model="generalInfoFormData.sacraments.confirmation_date"
+                        today-btn
+                        minimal
+                        no-unset
+                        mask="DD/MM/YYYY"
+                        :locale="dateLocales"
+                        @update:model-value="confirmationDateSelectionPopup.hide()"
+                      >
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+              <q-input
+                class="full-width"
+                outlined
+                label="Nơi Thêm Sức"
+                type="text"
+                :disable="!generalInfoFormData.sacraments.is_confirmed"
+                v-model="generalInfoFormData.sacraments.confirmation_place"
+              />
             </q-card-section>
           </q-card>
         </q-form>
       </div>
-      <q-btn class="full-width q-mt-md" color="primary" icon="save" label="Lưu lý lịch học viên" type="submit"
-        form="studentBasicAndSacramentsInfoForm" style="position: sticky; bottom: 0; z-index: 1" />
+      <q-btn
+        class="full-width q-mt-md"
+        color="primary"
+        icon="save"
+        label="Lưu lý lịch học viên"
+        type="submit"
+        form="studentBasicAndSacramentsInfoForm"
+        style="position: sticky; bottom: 0; z-index: 1"
+      />
     </q-tab-panel>
 
     <q-tab-panel name="parent">
-      <q-form class="q-gutter-y-md" id="parentInfoForm" @submit.prevent="handleParentInfoFormSubmit()">
+      <q-form
+        class="q-gutter-y-md"
+        id="parentInfoForm"
+        @submit.prevent="handleParentInfoFormSubmit()"
+      >
         <q-card class="bg-grey-1" flat bordered>
           <q-card-section>
             <div class="text-subtitle2">Thông tin bố</div>
           </q-card-section>
           <q-card-section class="q-pt-none q-gutter-y-md">
-            <q-input class="full-width" outlined label="Tên thánh" type="text"
-              v-model="parentInfoFormData.father_saint_name" />
-            <q-input class="full-width" outlined label="Họ tên" type="text"
-              v-model="parentInfoFormData.father_full_name" />
-            <q-input class="full-width" outlined label="Nghề nghiệp" type="text"
-              v-model="parentInfoFormData.father_job" />
+            <q-input
+              class="full-width"
+              outlined
+              label="Tên thánh"
+              type="text"
+              v-model="parentInfoFormData.father_saint_name"
+            />
+            <q-input
+              class="full-width"
+              outlined
+              label="Họ tên"
+              type="text"
+              v-model="parentInfoFormData.father_full_name"
+            />
+            <q-input
+              class="full-width"
+              outlined
+              label="Nghề nghiệp"
+              type="text"
+              v-model="parentInfoFormData.father_job"
+            />
           </q-card-section>
         </q-card>
         <q-card class="bg-grey-1" flat bordered>
@@ -119,17 +264,39 @@
             <div class="text-subtitle2">Thông tin mẹ</div>
           </q-card-section>
           <q-card-section class="q-pt-none q-gutter-y-md">
-            <q-input class="full-width" outlined label="Tên thánh" type="text"
-              v-model="parentInfoFormData.mother_saint_name" />
-            <q-input class="full-width" outlined label="Họ tên" type="text"
-              v-model="parentInfoFormData.mother_full_name" />
-            <q-input class="full-width" outlined label="Nghề nghiệp" type="text"
-              v-model="parentInfoFormData.mother_job" />
+            <q-input
+              class="full-width"
+              outlined
+              label="Tên thánh"
+              type="text"
+              v-model="parentInfoFormData.mother_saint_name"
+            />
+            <q-input
+              class="full-width"
+              outlined
+              label="Họ tên"
+              type="text"
+              v-model="parentInfoFormData.mother_full_name"
+            />
+            <q-input
+              class="full-width"
+              outlined
+              label="Nghề nghiệp"
+              type="text"
+              v-model="parentInfoFormData.mother_job"
+            />
           </q-card-section>
         </q-card>
       </q-form>
-      <q-btn class="full-width q-mt-md" color="primary" icon="save" label="Lưu thông tin phụ huynh" type="submit"
-        form="parentInfoForm" style="position: sticky; bottom: 0; z-index: 1" />
+      <q-btn
+        class="full-width q-mt-md"
+        color="primary"
+        icon="save"
+        label="Lưu thông tin phụ huynh"
+        type="submit"
+        form="parentInfoForm"
+        style="position: sticky; bottom: 0; z-index: 1"
+      />
     </q-tab-panel>
 
     <q-tab-panel name="contact">
@@ -139,22 +306,48 @@
             <div class="text-subtitle2">Địa chỉ mới (sau sáp nhập)</div>
           </q-card-section>
           <q-card-section class="q-pt-none q-gutter-y-md">
-            <q-input class="full-width" outlined label="Dòng 1 (số nhà, tên đường, khu phố)" type="text"
-              v-model="addressFormData.address_line_1" />
-            <q-input class="full-width" outlined label="Dòng 2 (phường/xã, thành phố/tỉnh)" type="text"
-              v-model="addressFormData.address_line_2" />
+            <q-input
+              class="full-width"
+              outlined
+              label="Dòng 1 (số nhà, tên đường, khu phố)"
+              type="text"
+              v-model="addressFormData.address_line_1"
+            />
+            <q-input
+              class="full-width"
+              outlined
+              label="Dòng 2 (phường/xã, thành phố/tỉnh)"
+              type="text"
+              v-model="addressFormData.address_line_2"
+            />
           </q-card-section>
           <q-card-section>
             <div class="text-subtitle2">Địa chỉ cũ (trước sáp nhập)</div>
           </q-card-section>
           <q-card-section class="q-pt-none q-gutter-y-md">
-            <q-input class="full-width" outlined label="Dòng 1 (số nhà, tên đường, khu phố)" type="text"
-              v-model="addressFormData.old_address_line_1" />
-            <q-input class="full-width" outlined label="Dòng 2 (phường/xã, quận/huyện, thành phố/tỉnh)" type="text"
-              v-model="addressFormData.old_address_line_2" />
+            <q-input
+              class="full-width"
+              outlined
+              label="Dòng 1 (số nhà, tên đường, khu phố)"
+              type="text"
+              v-model="addressFormData.old_address_line_1"
+            />
+            <q-input
+              class="full-width"
+              outlined
+              label="Dòng 2 (phường/xã, quận/huyện, thành phố/tỉnh)"
+              type="text"
+              v-model="addressFormData.old_address_line_2"
+            />
           </q-card-section>
           <q-card-section>
-            <q-btn class="full-width" color="primary" icon="save" label="Lưu địa chỉ" type="submit" />
+            <q-btn
+              class="full-width"
+              color="primary"
+              icon="save"
+              label="Lưu địa chỉ"
+              type="submit"
+            />
           </q-card-section>
         </q-card>
       </q-form>
@@ -163,37 +356,66 @@
         <q-card-section>
           <div class="row justify-between items-center">
             <div class="text-subtitle2">Thông tin liên lạc</div>
-            <q-btn color="primary" icon="mdi-plus" label="Thêm mới" size="md" @click="addNewContact()"
-              :disable="!!contactList.find((c) => c.isEdit)" />
+            <q-btn
+              color="primary"
+              icon="mdi-plus"
+              label="Thêm mới"
+              size="md"
+              @click="addNewContact()"
+              :disable="!!contactList.find((c) => c.isEdit)"
+            />
           </div>
-
         </q-card-section>
         <q-card-section class="q-pt-none q-gutter-y-md">
           <q-list bordered separator v-if="contactList.length > 0">
-            <q-item :clickable="!contact.isEdit" v-for="contact in contactList" :key="contact.frontend_key">
+            <q-item
+              :clickable="!contact.isEdit"
+              v-for="contact in contactList"
+              :key="contact.frontend_key"
+            >
               <template v-if="!contact.isEdit">
                 <q-item-section side>
                   <q-icon :name="contactTypeOptions.find((t) => t.value === contact.type)?.icon" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ contact.info }}</q-item-label>
-                  <q-item-label caption>{{contactTypeOptions.find((t) => t.value === contact.type)?.label}} {{
-                    contact.relationship ? '-' : '' }}
-                    {{contactRelationTypeOptions.find((t) => t.value ===
-                      contact.relationship)?.label
-                    }}</q-item-label>
+                  <q-item-label caption
+                    >{{ contactTypeOptions.find((t) => t.value === contact.type)?.label }}
+                    {{ contact.relationship ? '-' : '' }}
+                    {{
+                      contactRelationTypeOptions.find((t) => t.value === contact.relationship)
+                        ?.label
+                    }}</q-item-label
+                  >
                 </q-item-section>
                 <q-item-section side v-if="!contactList.find((c) => c.isEdit)">
-                  <q-btn flat round color="" icon="mdi-dots-horizontal" dense @click.prevent.stop="">
+                  <q-btn
+                    flat
+                    round
+                    color=""
+                    icon="mdi-dots-horizontal"
+                    dense
+                    @click.prevent.stop=""
+                  >
                     <q-menu>
                       <q-list>
-                        <q-item clickable v-close-popup v-ripple @click="enableEditContact(contact)">
+                        <q-item
+                          clickable
+                          v-close-popup
+                          v-ripple
+                          @click="enableEditContact(contact)"
+                        >
                           <q-item-section avatar>
                             <q-icon color="" name="mdi-pencil" />
                           </q-item-section>
                           <q-item-section>Chỉnh sửa</q-item-section>
                         </q-item>
-                        <q-item clickable v-close-popup v-ripple @click="handleRemoveContact(contact)">
+                        <q-item
+                          clickable
+                          v-close-popup
+                          v-ripple
+                          @click="handleRemoveContact(contact)"
+                        >
                           <q-item-section avatar>
                             <q-icon color="negative" name="mdi-delete" />
                           </q-item-section>
@@ -207,32 +429,65 @@
               <template v-else>
                 <q-item-section>
                   <div class="q-pt-md q-gutter-sm">
-                    <q-form class="q-gutter-y-md" :id="`contactForm-${contact.frontend_key}`"
-                      @submit.prevent="handleSaveContact(contact)" ref="contactFormRef">
-                      <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined :options="contactTypeOptions"
-                        map-options emit-value v-model="contact.type" label="Phương thức *" hide-bottom-space
-                        ref="contactFormValidation.refs.type" :rules="contactFormValidation.rules.type" />
-                      <q-select class="full-width" dropdown-icon="mdi-menu-down" outlined clearable
-                        :options="contactRelationTypeOptions" map-options emit-value v-model="contact.relationship"
-                        label="Quan hệ với học viên" hint="Để trống nếu là thông tin của chính học viên" />
-                      <q-input class="full-width" outlined label="Chi tiết *" type="text" v-model="contact.info"
-                        maxlength="40" hide-bottom-space ref="contactFormValidation.refs.info"
-                        :rules="contactFormValidation.rules.info" />
+                    <q-form
+                      class="q-gutter-y-md"
+                      :id="`contactForm-${contact.frontend_key}`"
+                      @submit.prevent="handleSaveContact(contact)"
+                      ref="contactFormRef"
+                    >
+                      <q-select
+                        class="full-width"
+                        dropdown-icon="mdi-menu-down"
+                        outlined
+                        :options="contactTypeOptions"
+                        map-options
+                        emit-value
+                        v-model="contact.type"
+                        label="Phương thức *"
+                        hide-bottom-space
+                        ref="contactFormValidation.refs.type"
+                        :rules="contactFormValidation.rules.type"
+                      />
+                      <q-select
+                        class="full-width"
+                        dropdown-icon="mdi-menu-down"
+                        outlined
+                        clearable
+                        :options="contactRelationTypeOptions"
+                        map-options
+                        emit-value
+                        v-model="contact.relationship"
+                        label="Quan hệ với học viên"
+                        hint="Để trống nếu là thông tin của chính học viên"
+                      />
+                      <q-input
+                        class="full-width"
+                        outlined
+                        label="Chi tiết *"
+                        type="text"
+                        v-model="contact.info"
+                        maxlength="40"
+                        hide-bottom-space
+                        ref="contactFormValidation.refs.info"
+                        :rules="contactFormValidation.rules.info"
+                      />
                       <div class="q-gutter-x-sm q-pb-md row justify-end">
-                        <q-btn color="negative" icon="mdi-cancel" label="Hủy" @click="cancelEditContact(contact)" />
+                        <q-btn
+                          color="negative"
+                          icon="mdi-cancel"
+                          label="Hủy"
+                          @click="cancelEditContact(contact)"
+                        />
                         <q-btn color="primary" icon="save" label="Lưu" type="submit" />
                       </div>
                     </q-form>
-
                   </div>
                 </q-item-section>
               </template>
             </q-item>
           </q-list>
           <div class="row" v-else>
-            <div class="text-center full-width text-subtitle">
-              (chưa có thông tin)
-            </div>
+            <div class="text-center full-width text-subtitle">(chưa có thông tin)</div>
           </div>
         </q-card-section>
       </q-card>
@@ -246,7 +501,12 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { date, useQuasar } from 'quasar'
 
-import { genderOptions, dateLocales, contactTypeOptions, contactRelationTypeOptions } from 'src/helpers/constants'
+import {
+  genderOptions,
+  dateLocales,
+  contactTypeOptions,
+  contactRelationTypeOptions,
+} from 'src/helpers/constants'
 import { useStudentStore } from 'src/stores/student-store'
 import { useAppStore } from 'stores/app-store'
 
@@ -284,22 +544,20 @@ const generalInfoFormData = ref({
     is_confirmed: null,
     confirmation_date: null,
     confirmation_place: '',
-  }
+  },
 })
 
 const generalInfoFormValidations = {
   refs: {
     saintName: ref(null),
     firstName: ref(null),
-    lastName: ref(null)
+    lastName: ref(null),
   },
   rules: {
-    saintName: [
-      (val) => (val && val.length > 0) || 'Vui lòng nhập tên thánh'
-    ],
+    saintName: [(val) => (val && val.length > 0) || 'Vui lòng nhập tên thánh'],
     firstName: [(val) => (val && val.length > 0) || 'Vui lòng nhập tên'],
     lastName: [(val) => (val && val.length > 0) || 'Vui lòng nhập họ'],
-  }
+  },
 }
 
 const parentInfoFormData = ref({
@@ -315,7 +573,7 @@ const addressFormData = ref({
   address_line_1: '',
   address_line_2: '',
   old_address_line_1: '',
-  old_address_line_2: ''
+  old_address_line_2: '',
 })
 
 const contactList = ref([])
@@ -326,11 +584,9 @@ const contactFormValidation = {
     info: ref(null),
   },
   rules: {
-    type: [
-      (val) => (val && val.length > 0) || 'Vui lòng chọn loại liên lạc'
-    ],
+    type: [(val) => (val && val.length > 0) || 'Vui lòng chọn loại liên lạc'],
     info: [(val) => (val && val.length > 0) || 'Vui lòng nhập thông tin liên lạc'],
-  }
+  },
 }
 
 onMounted(async () => {
@@ -368,7 +624,8 @@ const populateGeneralInfoFormData = () => {
     'DD/MM/YYYY',
     dateLocales,
   )
-  generalInfoFormData.value.sacraments.confirmation_place = studentDetails.value.sacraments.confirmation_place
+  generalInfoFormData.value.sacraments.confirmation_place =
+    studentDetails.value.sacraments.confirmation_place
 }
 
 const populateParentInfoFormData = () => {
@@ -402,7 +659,7 @@ const addNewContact = () => {
     type: null,
     relationship: null,
     frontend_key: crypto.randomUUID(),
-    isEdit: true
+    isEdit: true,
   }
   contactList.value.unshift(newContact)
 }
@@ -427,7 +684,6 @@ const cancelEditContact = (contact) => {
 }
 
 const handleBasicAndSacramentsInfoFormSubmit = async () => {
-
   const validationResult = await generalInfoFormRef.value.validate()
   if (!validationResult) {
     return
@@ -456,7 +712,7 @@ const handleBasicAndSacramentsInfoFormSubmit = async () => {
 
   await updateStudentInfo(studentDetails.value.basic.code, {
     basic: basic_data,
-    sacraments: sacraments_data
+    sacraments: sacraments_data,
   })
 }
 
@@ -464,7 +720,7 @@ const handleParentInfoFormSubmit = async () => {
   const parents_data = { ...parentInfoFormData.value }
 
   await updateStudentInfo(studentDetails.value.basic.code, {
-    parents: parents_data
+    parents: parents_data,
   })
 }
 
@@ -472,7 +728,7 @@ const handleAddressFormSubmit = async () => {
   const address_data = { ...addressFormData.value }
 
   await updateStudentInfo(studentDetails.value.basic.code, {
-    address: address_data
+    address: address_data,
   })
 }
 
@@ -481,7 +737,7 @@ const handleSaveContact = async (updatedContact) => {
     id: updatedContact.id,
     type: updatedContact.type,
     relationship: updatedContact.relationship,
-    info: updatedContact.info
+    info: updatedContact.info,
   }
   await createOrUpdateContacts(studentDetails.value.basic.code, contactData)
   populateContactList()

@@ -40,7 +40,17 @@
           </div>
         </q-toolbar-title>
         <!-- <q-space /> -->
-        <q-btn flat round dense icon="mdi-cog" size="lg" class="q-mr-xs" to="/settings" />
+        <q-btn
+          flat
+          ripple
+          round
+          dense
+          icon="mdi-qrcode-scan"
+          size="lg"
+          class="q-mr-xs"
+          @click="studentQuickActionModalRef.open()"
+        />
+        <q-btn flat ripple round dense icon="mdi-cog" size="lg" class="q-mr-xs" to="/settings" />
       </q-toolbar>
     </q-header>
 
@@ -59,17 +69,26 @@
       </q-toolbar>
     </q-footer>
   </q-layout>
+  <QuickQrScanModal ref="quickQrScanModalRef" />
+  <StudentQuickActionModal ref="studentQuickActionModalRef" />
 </template>
 
 <script setup>
 import { useAppStore } from 'stores/app-store'
 import { useAuthStore } from 'stores/auth-store'
 import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
+
+import QuickQrScanModal from './modals/QuickQrScanModal.vue'
+import StudentQuickActionModal from './modals/StudentQuickActionModal.vue'
 
 const appStore = useAppStore()
 const authStore = useAuthStore()
 const { appVersion } = storeToRefs(appStore)
 const { currentUser } = authStore
+
+const quickQrScanModalRef = ref(null)
+const studentQuickActionModalRef = ref(null)
 
 const getFullName = (catechist) => {
   const nameSegments = [catechist.last_name, catechist.middle_name, catechist.first_name]
