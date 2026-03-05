@@ -68,13 +68,15 @@ export const useUnitStore = defineStore('unit', () => {
 
     try {
       appStore.setSuppressLoading(true)
+      appStore.setSuppressErrorNotification(true)
       const result = await doAttendanceCheckWithQR(gradeScheduleId, attendanceDataWithQr)
       return result.data
     } catch (error) {
       console.error(error)
-      return null
+      return error.response.data
     } finally {
       appStore.setSuppressLoading(false)
+      appStore.setSuppressErrorNotification(false)
     }
   }
 

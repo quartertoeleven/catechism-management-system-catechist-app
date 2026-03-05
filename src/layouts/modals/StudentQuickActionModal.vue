@@ -1,9 +1,8 @@
 <template>
-  <q-dialog v-model="dialogOpen" class="full-width" position="bottom">
+  <q-dialog v-model="dialogOpen" class="full-width">
     <q-card class="full-width">
       <q-card-section class="q-mx-md row items-center q-pb-none">
-        <div class="text-h5 text-weight-regular text-center full-width">Học viên</div>
-        <div class="text-caption text-center full-width">GL2025-HV0001</div>
+        <div class="text-h5 text-weight-regular text-center full-width">Thông tin học viên</div>
       </q-card-section>
       <q-card-section>
         <q-list>
@@ -12,7 +11,7 @@
               <q-item-label><span class="text-bold">Mã học viên</span></q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-item-label>Mã học viên</q-item-label>
+              <q-item-label>{{ studentInfo.code }}</q-item-label>
             </q-item-section>
           </q-item>
           <q-item>
@@ -20,7 +19,7 @@
               <q-item-label><span class="text-bold">Tên thánh</span></q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-item-label>Maria Madalêna</q-item-label>
+              <q-item-label>{{ studentInfo.saint_name || '(chưa có Tên Thánh)' }}</q-item-label>
             </q-item-section>
           </q-item>
           <q-item>
@@ -28,7 +27,7 @@
               <q-item-label><span class="text-bold">Họ tên</span></q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-item-label>Nguyễn Quỳnh Yến Thảo Nhi</q-item-label>
+              <q-item-label>{{ studentInfo.full_name }}</q-item-label>
             </q-item-section>
           </q-item>
           <q-item>
@@ -36,7 +35,15 @@
               <q-item-label><span class="text-bold">Giới tính</span></q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-item-label>Nữ</q-item-label>
+              <q-item-label>{{ studentInfo.gender === 'male' ? 'Nam' : 'Nữ' }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              <q-item-label><span class="text-bold">Lớp hiện tại</span></q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-item-label>{{ studentInfo.current_unit?.name || '(chưa xếp lớp)' }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -54,7 +61,7 @@
           outline
           color="primary"
           label="Xem thông tin học viên"
-          to="/students/GL2025-HV0001"
+          :to="`/students/${studentInfo.code}`"
         />
         <q-btn
           class="full-width"
@@ -62,6 +69,8 @@
           color="positive"
           icon="mdi-check-circle-outline"
           label="Điểm danh học viên"
+          v-if="studentInfo.current_unit"
+          :to="`/units/${studentInfo.current_unit?.code}/attendance-check?student_prefill=${studentInfo.code}`"
         />
       </q-card-section>
     </q-card>
@@ -70,6 +79,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useQrQuickActionStore } from 'src/stores/qr-quick-action-store'
+
+const qrQuickActionStore = useQrQuickActionStore()
+const { studentInfo } = storeToRefs(qrQuickActionStore)
 
 const dialogOpen = ref(false)
 

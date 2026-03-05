@@ -1,15 +1,34 @@
 <template>
   <div>
     <div class="q-pa-md">
-      <q-expansion-item v-model="expanded" icon="mdi-calendar-blank" :label="selectedTypeOption?.label || '(chưa chọn)'"
-        :caption="selectedDateOption?.label || '(chưa chọn)'" expand-icon="mdi-chevron-down">
+      <q-expansion-item
+        v-model="expanded"
+        icon="mdi-calendar-blank"
+        :label="selectedTypeOption?.label || '(chưa chọn)'"
+        :caption="selectedDateOption?.label || '(chưa chọn)'"
+        expand-icon="mdi-chevron-down"
+      >
         <div class="q-pt-md">
           <div class="q-gutter-md">
-            <q-select outlined dense v-model="selectedDateOption" :options="dateOptions" label="Ngày điểm danh"
-              @update:model-value="onDateOptionChange" dropdown-icon="mdi-menu-down" />
-            <q-select outlined dense v-model="selectedTypeOption" :options="attendanceTypeOptions"
-              label="Loại điểm danh" :disable="!selectedDateOption" @update:model-value="onTypeOptionChange"
-              dropdown-icon="mdi-menu-down" />
+            <q-select
+              outlined
+              dense
+              v-model="selectedDateOption"
+              :options="dateOptions"
+              label="Ngày điểm danh"
+              @update:model-value="onDateOptionChange"
+              dropdown-icon="mdi-menu-down"
+            />
+            <q-select
+              outlined
+              dense
+              v-model="selectedTypeOption"
+              :options="attendanceTypeOptions"
+              label="Loại điểm danh"
+              :disable="!selectedDateOption"
+              @update:model-value="onTypeOptionChange"
+              dropdown-icon="mdi-menu-down"
+            />
           </div>
         </div>
       </q-expansion-item>
@@ -17,7 +36,10 @@
 
     <q-separator inset />
 
-    <div class="q-px-md q-py-md q-mt-xs" v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0">
+    <div
+      class="q-px-md q-py-md q-mt-xs"
+      v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
+    >
       <q-list bordered separator dense>
         <q-item>
           <q-item-section>
@@ -30,7 +52,7 @@
             <q-item-label class="text-weight-bold">Hiện diện</q-item-label>
           </q-item-section>
           <q-item-section side>
-            {{unitAttendancesForSchedule.filter((a) => a.status === 'present').length || 0}}
+            {{ unitAttendancesForSchedule.filter((a) => a.status === 'present').length || 0 }}
           </q-item-section>
         </q-item>
         <q-item>
@@ -40,11 +62,11 @@
           <q-item-section side>
             <q-item-label>
               Có phép:
-              {{unitAttendancesForSchedule.filter((a) => a.status === 'leave').length || 0}}
+              {{ unitAttendancesForSchedule.filter((a) => a.status === 'leave').length || 0 }}
             </q-item-label>
             <q-item-label>
               Không phép:
-              {{unitAttendancesForSchedule.filter((a) => a.status === 'absent').length || 0}}
+              {{ unitAttendancesForSchedule.filter((a) => a.status === 'absent').length || 0 }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -53,22 +75,47 @@
 
     <q-separator inset v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0" />
 
-    <div class="q-pa-md q-mb-xl" v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0">
-      <q-input class="q-pb-md" outlined v-model="quickFilterText" placeholder="Nhập để tìm kiếm nhanh" dense>
+    <div
+      class="q-pa-md q-mb-xl"
+      v-if="unitAttendancesForSchedule && unitAttendancesForSchedule.length > 0"
+    >
+      <q-input
+        class="q-pb-md"
+        outlined
+        v-model="quickFilterText"
+        placeholder="Nhập để tìm kiếm nhanh"
+        dense
+      >
         <template v-slot:append v-if="quickFilterText">
           <q-icon name="mdi-close" @click="quickFilterText = ''" class="cursor-pointer" />
         </template>
         <template v-slot:after>
           <span class="text-caption q-px-sm">hoặc</span>
-          <q-btn square color="primary" icon="mdi-qrcode-scan" @click="qrAttendanceCheckModalRef.open()" />
+          <q-btn
+            square
+            color="primary"
+            icon="mdi-qrcode-scan"
+            @click="qrAttendanceCheckModalRef.open()"
+          />
         </template>
       </q-input>
 
       <q-list bordered separator>
-        <q-item v-for="attendanceEntry in unitAttendancesForSchedule" :key="attendanceEntry.student.code" v-show="quickFilterText
-          ? (attendanceEntry.student.full_name?.toLowerCase().includes(quickFilterText.toLowerCase()) || attendanceEntry.student.full_name_without_accent?.toLowerCase().includes(quickFilterText.toLowerCase()))
-          : true
-          ">
+        <q-item
+          v-for="attendanceEntry in unitAttendancesForSchedule"
+          :key="attendanceEntry.student.code"
+          v-show="
+            quickFilterText
+              ? attendanceEntry.student.full_name
+                  ?.toLowerCase()
+                  .includes(quickFilterText.toLowerCase()) ||
+                attendanceEntry.student.full_name_without_accent
+                  ?.toLowerCase()
+                  .includes(quickFilterText.toLowerCase()) ||
+                attendanceEntry.student.code?.toLowerCase().includes(quickFilterText.toLowerCase())
+              : true
+          "
+        >
           <q-item-section>
             <div class="row no-wrap justify-start">
               <div class="col">
@@ -80,10 +127,16 @@
 
             <div class="row q-pt-sm">
               <div class="col text-center">
-                <q-radio v-for="attendanceOption in attendanceOptions" :key="attendanceOption.value"
-                  :val="attendanceOption.value" v-model="attendanceEntry.status" keep-color
-                  :label="attendanceOption.label" :color="attendanceOption.color"
-                  @update:model-value="updateAttendance(attendanceEntry)" />
+                <q-radio
+                  v-for="attendanceOption in attendanceOptions"
+                  :key="attendanceOption.value"
+                  :val="attendanceOption.value"
+                  v-model="attendanceEntry.status"
+                  keep-color
+                  :label="attendanceOption.label"
+                  :color="attendanceOption.color"
+                  @update:model-value="updateAttendance(attendanceEntry)"
+                />
               </div>
             </div>
           </q-item-section>
@@ -96,8 +149,13 @@
     </q-page-sticky>
   </div>
 
-  <QRAttendanceCheckModal ref="qrAttendanceCheckModalRef" :selectedDateObj="selectedDateOption"
-    :selectedTypeObj="selectedTypeOption" :currentUnit="unitDetails" @onClose="populateAttendanceEntry()" />
+  <QRAttendanceCheckModal
+    ref="qrAttendanceCheckModalRef"
+    :selectedDateObj="selectedDateOption"
+    :selectedTypeObj="selectedTypeOption"
+    :currentUnit="unitDetails"
+    @onClose="populateAttendanceEntry()"
+  />
 </template>
 
 <script setup>
@@ -152,6 +210,9 @@ onMounted(async () => {
   await unitStore.fetchUnitSchedules(router.currentRoute.value.params.unit_code)
   setPageSubtitle(unitDetails.value.name)
   populateUnitScheduleOptions()
+  if (router.currentRoute.value.query.student_prefill) {
+    quickFilterText.value = router.currentRoute.value.query.student_prefill
+  }
 })
 
 const populateUnitScheduleOptions = () => {

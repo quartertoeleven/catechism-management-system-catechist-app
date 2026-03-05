@@ -27,12 +27,9 @@
 </template> -->
 
 <template>
-  <q-layout view="lHr Lpr lFr">
+  <q-layout view="lHr Lpr lFr" class="bg-grey-1">
     <q-header class="bg-grey-1 text-grey-9">
-      <q-toolbar class="q-py-md">
-        <q-avatar>
-          <q-icon name="mdi-account-circle" size="lg" />
-        </q-avatar>
+      <q-toolbar class="q-pa-md">
         <q-toolbar-title>
           <div class="text-caption">Xin chào, {{ currentUser.catechist?.saint_name }}</div>
           <div class="text-weight-bold text-h6">
@@ -48,7 +45,7 @@
           icon="mdi-qrcode-scan"
           size="lg"
           class="q-mr-xs"
-          @click="studentQuickActionModalRef.open()"
+          @click="quickQrScanModalRef.open()"
         />
         <q-btn flat ripple round dense icon="mdi-cog" size="lg" class="q-mr-xs" to="/settings" />
       </q-toolbar>
@@ -69,7 +66,10 @@
       </q-toolbar>
     </q-footer>
   </q-layout>
-  <QuickQrScanModal ref="quickQrScanModalRef" />
+  <QuickQrScanModal
+    ref="quickQrScanModalRef"
+    @closeOnSaveSuccess="studentQuickActionModalRef.open()"
+  />
   <StudentQuickActionModal ref="studentQuickActionModalRef" />
 </template>
 

@@ -39,7 +39,7 @@ export default defineBoot(({ app, store, router }) => {
       if (error.code === 'ERR_NETWORK') {
         Notify.create({
           type: 'negative',
-          message: 'Internal server error',
+          message: 'Lỗi hệ thống. Vui lòng thử lại sau.',
           position: 'top-right',
           group: false,
           timeout: 4000,
@@ -57,10 +57,10 @@ export default defineBoot(({ app, store, router }) => {
           return Promise.reject(error)
         }
       }
-      if (router.currentRoute.value.name) {
+      if (router.currentRoute.value.name && !appStore.suppressErrorNotification) {
         Notify.create({
           type: 'negative',
-          message: error.response?.data.message || 'Internal server error',
+          message: error.response?.data.message || 'Lỗi hệ thống. Vui lòng thử lại sau',
           position: 'top-right',
           group: false,
           timeout: 4000,

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="dialogOpen" class="full-width" position="bottom">
+  <q-dialog v-model="dialogOpen" class="full-width">
     <q-card class="full-width">
       <q-card-section class="q-mx-md row items-center q-pb-none">
         <div class="text-h6 text-weight-regular text-center full-width">Quét QR học viên</div>
@@ -49,6 +49,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { QrcodeStream } from 'vue-qrcode-reader'
+
+import { useQrQuickActionStore } from 'src/stores/qr-quick-action-store'
+
+const qrQuickActionStore = useQrQuickActionStore()
+
+const emit = defineEmits(['closeOnSuccess'])
 
 const SCANNER_STATE_ERROR = 'error'
 const SCANNER_STATE_INFO = 'info'
@@ -131,6 +137,32 @@ const setQRScannerStatusInfo = (
 ) => {
   qrScannerStatus.value.state = SCANNER_STATE_INFO
   setQRScannerStatusMessage(title, description)
+}
+
+const setQRScannerStatusWaiting = (title = 'Đang xử lý', description) => {
+  qrScannerStatus.value.state = SCANNER_STATE_WAITING
+  setQRScannerStatusMessage(title, description)
+}
+
+const setQRScannerStatusError = (title, description, resetInterval = 3) => {
+  qrScannerStatus.value.state = SCANNER_STATE_ERROR
+  setQRScannerStatusMessage(title, description)
+  setTimeout(() => {
+    setQRScannerStatusInfo()
+  }, resetInterval * 1000)
+}
+
+const onQRCodeDetected = async (detectedCodes) => {
+  setQRScannerStatusWaiting()
+  const result = await qrQuickActionStore.fetchStudentInfoFromQrCode({
+    raw_qr_str: detectedCodes[0].rawValue,
+  })
+  if (!result.data.success) {
+    setQRScannerStatusError('Có lỗi xảy ra', result.data.message)
+  } else {
+    dialogOpen.value = false
+    emit('closeOnSaveSuccess')
+  }
 }
 
 defineExpose({
