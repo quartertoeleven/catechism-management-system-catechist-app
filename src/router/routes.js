@@ -33,6 +33,18 @@ const routes = [
   },
 
   {
+    path: '/students',
+    component: () => import('layouts/HeaderOnlyLayout.vue'),
+    children: [
+      {
+        path: ':student_code',
+        component: () => import('pages/students/StudentDetails.vue'),
+        name: 'student_detail_page',
+      },
+    ],
+  },
+
+  {
     path: '/grades',
     component: () => import('layouts/HeaderOnlyLayout.vue'),
     children: [

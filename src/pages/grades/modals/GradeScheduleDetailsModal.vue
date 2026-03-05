@@ -11,30 +11,16 @@
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <q-form
-          class="q-gutter-y-md"
-          id="gradeScheduleForm"
-          @submit.prevent="onSave"
-          ref="gradeScheduleForm"
-          greedy
-        >
-          <q-select
-            dropdown-icon="mdi-menu-down"
-            label="Từ lịch sinh hoạt chung ngày"
-            outlined
-            :options="generalSchedules"
-            map-options
-            emit-value
-            option-lab
-            clearable
-            v-if="!isEditMode"
+        <q-form class="q-gutter-y-md" id="gradeScheduleForm" @submit.prevent="onSave" ref="gradeScheduleForm" greedy>
+          <q-select dropdown-icon="mdi-menu-down" label="Từ lịch sinh hoạt chung ngày" outlined
+            :options="generalSchedules" map-options emit-value option-lab clearable v-if="!isEditMode"
             v-model="gradeScheduleDetailsFormData.selectedGeneralSchedule"
-            @update:model-value="prefillGradeScheduleFormData"
-          >
+            @update:model-value="prefillGradeScheduleFormData">
             <template v-slot:selected>
               {{
                 gradeScheduleDetailsFormData.selectedGeneralSchedule
-                  ? `${date.formatDate(gradeScheduleDetailsFormData.selectedGeneralSchedule.date, 'dddd', dateLocales)} - ${date.formatDate(gradeScheduleDetailsFormData.selectedGeneralSchedule.date, 'DD/MM/YYYY')}`
+                  ? `${date.formatDate(gradeScheduleDetailsFormData.selectedGeneralSchedule.date, 'dddd', dateLocales)} -
+              ${date.formatDate(gradeScheduleDetailsFormData.selectedGeneralSchedule.date, 'DD/MM/YYYY')}`
                   : ''
               }}
             </template>
@@ -42,8 +28,9 @@
               <q-item v-bind="scope.itemProps">
                 <q-item-section>
                   <q-item-label>{{
-                    `${date.formatDate(scope.opt.date, 'dddd', dateLocales)} - ${date.formatDate(scope.opt.date, 'DD/MM/YYYY')}`
-                  }}</q-item-label>
+                    `${date.formatDate(scope.opt.date, 'dddd', dateLocales)} - ${date.formatDate(scope.opt.date,
+                      'DD/MM/YYYY')}`
+                    }}</q-item-label>
                 </q-item-section>
               </q-item>
             </template>
@@ -51,82 +38,41 @@
 
           <q-separator class="" v-if="!isEditMode" />
 
-          <q-input
-            outlined
-            v-model="gradeScheduleDetailsFormData.date"
-            label="Ngày *"
-            readonly
-            v-if="
-              !isEditMode || (isEditMode && !gradeScheduleDetailsFormData.selectedGeneralSchedule)
-            "
-            ref="gradeScheduleDetailsFormDataValidations.refs.dateRef"
-            :rules="gradeScheduleDetailsFormDataValidations.rules.date"
-          >
+          <q-input outlined v-model="gradeScheduleDetailsFormData.date" label="Ngày *" readonly v-if="
+            !isEditMode || (isEditMode && !gradeScheduleDetailsFormData.selectedGeneralSchedule)
+          " ref="gradeScheduleDetailsFormDataValidations.refs.dateRef"
+            :rules="gradeScheduleDetailsFormDataValidations.rules.date">
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy
-                  cover
-                  transition-show="scale"
-                  transition-hide="scale"
-                  ref="dateSelectionPopup"
-                >
-                  <q-date
-                    v-model="gradeScheduleDetailsFormData.date"
-                    today-btn
-                    minimal
-                    no-unset
-                    mask="dddd - DD/MM/YYYY"
-                    :readonly="!!gradeScheduleDetailsFormData.selectedGeneralSchedule"
-                    :locale="dateLocales"
-                    @update:model-value="dateSelectionPopup.hide()"
-                  >
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="dateSelectionPopup">
+                  <q-date v-model="gradeScheduleDetailsFormData.date" today-btn minimal no-unset
+                    mask="dddd - DD/MM/YYYY" :readonly="!!gradeScheduleDetailsFormData.selectedGeneralSchedule"
+                    :locale="dateLocales" @update:model-value="dateSelectionPopup.hide()">
                   </q-date>
                 </q-popup-proxy>
               </q-icon>
             </template>
           </q-input>
 
-          <q-select
-            dropdown-icon="mdi-menu-down"
-            outlined
-            :options="semesterOptions"
-            map-options
-            emit-value
+          <q-select dropdown-icon="mdi-menu-down" outlined :options="semesterOptions" map-options emit-value
             v-model="gradeScheduleDetailsFormData.semester"
-            :readonly="!!gradeScheduleDetailsFormData.selectedGeneralSchedule"
-            label="Học kì"
-            v-if="
+            :readonly="!!gradeScheduleDetailsFormData.selectedGeneralSchedule" label="Học kì" v-if="
               !isEditMode || (isEditMode && !gradeScheduleDetailsFormData.selectedGeneralSchedule)
-            "
-            ref="gradeScheduleDetailsFormDataValidations.refs.semesterRef"
-            :rules="gradeScheduleDetailsFormDataValidations.rules.semester"
-          />
+            " ref="gradeScheduleDetailsFormDataValidations.refs.semesterRef"
+            :rules="gradeScheduleDetailsFormDataValidations.rules.semester" />
 
-          <q-input
-            outlined
-            v-model="gradeScheduleDetailsFormData.massContent"
-            label="Nội dung Thánh Lễ"
-            hint="Đánh dấu vào ô chọn để bật điểm danh"
-            ref="gradeScheduleDetailsFormDataValidations.refs.massRef"
-            :rules="gradeScheduleDetailsFormDataValidations.rules.massContent"
-            counter
-            reactiveRules
-          >
+          <q-input outlined v-model="gradeScheduleDetailsFormData.massContent" label="Nội dung Thánh Lễ"
+            hint="Đánh dấu vào ô chọn để bật điểm danh" ref="gradeScheduleDetailsFormDataValidations.refs.massRef"
+            :rules="gradeScheduleDetailsFormDataValidations.rules.massContent" counter reactiveRules>
             <template v-slot:append>
               <q-checkbox v-model="gradeScheduleDetailsFormData.isMassAttendanceCheck" />
             </template>
           </q-input>
 
-          <q-input
-            outlined
-            v-model="gradeScheduleDetailsFormData.lessonContent"
-            label="Nội dung Giáo Lý"
-            hint="Đánh dấu vào ô chọn để bật điểm danh"
-            counter
+          <q-input outlined v-model="gradeScheduleDetailsFormData.lessonContent" label="Nội dung Giáo Lý"
+            hint="Đánh dấu vào ô chọn để bật điểm danh" counter
             ref="gradeScheduleDetailsFormDataValidations.refs.lessonRef"
-            :rules="gradeScheduleDetailsFormDataValidations.rules.lessonContent"
-            reactiveRules
-          >
+            :rules="gradeScheduleDetailsFormDataValidations.rules.lessonContent" reactiveRules>
             <template v-slot:append>
               <q-checkbox v-model="gradeScheduleDetailsFormData.isLessonAttendanceCheck" />
             </template>
@@ -136,14 +82,8 @@
 
       <q-card-actions align="right">
         <q-btn flat label="Hủy" icon="mdi-close-circle" color="negative" v-close-popup />
-        <q-btn
-          flat
-          type="submit"
-          form="gradeScheduleForm"
-          :label="isEditMode ? 'Cập nhật' : 'Tạo mới'"
-          icon="mdi-content-save"
-          color="primary"
-        />
+        <q-btn flat type="submit" form="gradeScheduleForm" :label="isEditMode ? 'Cập nhật' : 'Tạo mới'"
+          icon="mdi-content-save" color="primary" />
       </q-card-actions>
     </q-card>
   </q-dialog>

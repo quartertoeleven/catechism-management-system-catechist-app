@@ -106,7 +106,13 @@
           :key="attendanceEntry.student.code"
           v-show="
             quickFilterText
-              ? attendanceEntry.full_name?.toLowerCase().includes(quickFilterText.toLowerCase())
+              ? attendanceEntry.student.full_name
+                  ?.toLowerCase()
+                  .includes(quickFilterText.toLowerCase()) ||
+                attendanceEntry.student.full_name_without_accent
+                  ?.toLowerCase()
+                  .includes(quickFilterText.toLowerCase()) ||
+                attendanceEntry.student.code?.toLowerCase().includes(quickFilterText.toLowerCase())
               : true
           "
         >
@@ -114,7 +120,7 @@
             <div class="row no-wrap justify-start">
               <div class="col">
                 <q-item-label caption>{{ attendanceEntry.student.saint_name }}</q-item-label>
-                <q-item-label> {{ attendanceEntry.full_name }}</q-item-label>
+                <q-item-label> {{ attendanceEntry.student.full_name }}</q-item-label>
               </div>
               <q-item-label caption>{{ attendanceEntry.student.code }}</q-item-label>
             </div>
@@ -204,6 +210,9 @@ onMounted(async () => {
   await unitStore.fetchUnitSchedules(router.currentRoute.value.params.unit_code)
   setPageSubtitle(unitDetails.value.name)
   populateUnitScheduleOptions()
+  if (router.currentRoute.value.query.student_prefill) {
+    quickFilterText.value = router.currentRoute.value.query.student_prefill
+  }
 })
 
 const populateUnitScheduleOptions = () => {
@@ -272,17 +281,8 @@ const populateAttendanceEntry = async () => {
     selectedTypeOption.value.value,
   )
   unitAttendancesForSchedule.value = result
-  unitAttendancesForSchedule.value.forEach((attendanceEntry) => {
-    attendanceEntry.full_name = getStudentFullName(attendanceEntry.student)
-  })
   slide.value = `student-${result[0].student.code}`
   expanded.value = false
-}
-
-const getStudentFullName = (student) => {
-  const nameSegments = [student.last_name, student.middle_name, student.first_name]
-  const fullNameWithoutEmptySegment = nameSegments.filter((segment) => !!segment)
-  return fullNameWithoutEmptySegment.join(' ')
 }
 
 const updateAttendance = async (attendanceEntry) => {

@@ -20,7 +20,10 @@
               <q-item-section>
                 <q-item-label>Ngày điểm danh</q-item-label>
               </q-item-section>
-              <q-item-section side> {{ selectedDateObj?.label }} </q-item-section>
+              <q-item-section side>
+                <div>{{ selectedDateObj?.label.split('-')[0] }}</div>
+                <div>{{ selectedDateObj?.label.split('-')[1] }}</div>
+              </q-item-section>
             </q-item>
             <q-item>
               <q-item-section>
@@ -176,8 +179,8 @@ const onQRCodeDetected = async (detectedCodes) => {
     props.selectedTypeObj.value,
     detectedCodes[0].rawValue,
   )
-  if (!result) {
-    setQRScannerStatusError('Có lỗi xảy ra khi điểm danh', 'Vui lòng thử lại')
+  if (!result.success) {
+    setQRScannerStatusError('Có lỗi xảy ra khi điểm danh', result.message)
   } else {
     setQRScannerStatusSuccess(
       'Điểm danh thành công',

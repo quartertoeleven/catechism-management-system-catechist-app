@@ -4,7 +4,6 @@
       <q-expansion-item
         icon="mdi-account-settings"
         label="Account settings"
-        caption="John Doe"
         expand-icon="mdi-menu-down"
         default-opened
         class="bg-grey-3"

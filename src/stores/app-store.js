@@ -7,6 +7,7 @@ export const useAppStore = defineStore('app', () => {
   const navigateBackPath = ref('/')
   const appVersion = ref(process.env.APP_VERSION || 'develop')
   const suppressLoading = ref(false)
+  const suppressErrorNotification = ref(false)
 
   const setPageTitle = (title) => {
     pageTitle.value = title
@@ -21,6 +22,7 @@ export const useAppStore = defineStore('app', () => {
   }
 
   const setSuppressLoading = (value) => (suppressLoading.value = value)
+  const setSuppressErrorNotification = (value) => (suppressErrorNotification.value = value)
 
   return {
     pageTitle,
@@ -32,5 +34,7 @@ export const useAppStore = defineStore('app', () => {
     appVersion,
     suppressLoading,
     setSuppressLoading,
+    suppressErrorNotification,
+    setSuppressErrorNotification,
   }
 })
