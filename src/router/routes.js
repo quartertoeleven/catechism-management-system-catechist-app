@@ -29,6 +29,11 @@ const routes = [
         component: () => import('pages/units/UnitStatistics.vue'),
         name: 'unit_statistics',
       },
+      {
+        path: ':unit_code/year-end-summary',
+        component: () => import('pages/units/UnitYearEndSummary.vue'),
+        name: 'unit_year_end_summary',
+      },
     ],
   },
 
