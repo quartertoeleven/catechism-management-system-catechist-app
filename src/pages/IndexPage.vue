@@ -64,10 +64,10 @@
                   class="full-width q-pa-md"
                   no-wrap
                   no-caps
-                  :to="`/units/${currentUser.current_unit?.code}/statistics`"
+                  :to="`/units/${currentUser.current_unit?.code}/year-end-summary`"
                 >
                   <q-icon name="mdi-chart-box-outline" size="xl" class="q-pb-md" />
-                  <div class="text-subtitle2 text-weight-regular">Thống kê</div>
+                  <div class="text-subtitle2 text-weight-regular">Tổng kết năm</div>
                 </q-btn>
               </div>
             </div>
