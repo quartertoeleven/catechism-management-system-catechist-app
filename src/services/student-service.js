@@ -19,3 +19,7 @@ export const deleteStudentContacts = (student_code, contact_id) => {
 export const createOrUpdateStudentExamScore = (student_code, score_data) => {
   return api.post(`/students/${student_code}/exam-scores`, score_data)
 }
+
+export const updateStudentYearEndResult = (student_code, year_end_result_data) => {
+  return api.post(`/students/${student_code}/year-end-results`, year_end_result_data)
+}

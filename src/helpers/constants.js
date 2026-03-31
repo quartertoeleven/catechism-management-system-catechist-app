@@ -125,6 +125,36 @@ const contactRelationTypeOptions = [
   },
 ]
 
+const studyYearResultOptions = [
+  {
+    label: 'Lên lớp',
+    value: 'passed',
+  },
+  {
+    label: 'Ở lại lớp',
+    value: 'failed',
+  },
+]
+
+const unitRankOptions = [
+  {
+    label: 'Hạng Nhất',
+    value: 'first',
+  },
+  {
+    label: 'Hạng Nhì',
+    value: 'second',
+  },
+  {
+    label: 'Hạng Ba',
+    value: 'third',
+  },
+  {
+    label: 'Hạng Khuyến Khích',
+    value: 'encouragement',
+  },
+]
+
 export {
   dateLocales,
   scoreOptions,
@@ -132,4 +162,6 @@ export {
   genderOptions,
   contactTypeOptions,
   contactRelationTypeOptions,
+  unitRankOptions,
+  studyYearResultOptions,
 }

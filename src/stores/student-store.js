@@ -7,6 +7,7 @@ import {
   updateStudentDetails,
   createOrUpdateStudentContacts,
   deleteStudentContacts,
+  updateStudentYearEndResult,
 } from '../services/student-service'
 
 export const useStudentStore = defineStore('student', () => {
@@ -55,11 +56,28 @@ export const useStudentStore = defineStore('student', () => {
     }
   }
 
+  const saveStudentYearEndResult = async (student_code, year_end_result_data) => {
+    const result = await updateStudentYearEndResult(student_code, year_end_result_data)
+    if (result.data.success) {
+      Notify.create({
+        type: 'positive',
+        message: result.data.message,
+        position: 'top-right',
+        group: false,
+        timeout: 4000,
+        progress: true,
+        icon: 'mdi-check',
+      })
+      studentDetails.value.year_end_result = result.data.data
+    }
+  }
+
   return {
     studentDetails,
     fetchStudentInfo,
     updateStudentInfo,
     createOrUpdateContacts,
     deleteContact,
+    saveStudentYearEndResult,
   }
 })

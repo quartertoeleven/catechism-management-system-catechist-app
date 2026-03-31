@@ -56,6 +56,14 @@
                 : '0.0'
             }}</q-item-label>
           </q-item-section>
+          <q-item-section side v-if="selectedSortingBy === 'unit_ranking'">
+            <q-item-label caption>Hạng</q-item-label>
+            <q-item-label class="text-weight-bold">{{
+              unitRankOptions.find(
+                (option) => option.value === student.year_end_result.unit_ranking,
+              )?.label
+            }}</q-item-label>
+          </q-item-section>
         </template>
         <q-card>
           <q-card-section>
@@ -63,24 +71,58 @@
               <div class="text-subtitle1 text-weight-bold">Nhận xét và đánh giá</div>
             </div> -->
             <div class="full-width">
-              <q-form class="q-gutter-y-md">
-                <q-input v-model="comment" type="textarea" outlined label="Nhận xét" autogrow />
+              <q-form class="q-gutter-y-md" @submit.prevent="handleYearEndResultSubmit(student)">
+                <q-input
+                  v-model="student.year_end_result.remark"
+                  type="textarea"
+                  outlined
+                  label="Nhận xét"
+                  autogrow
+                  maxlength="500"
+                />
                 <div class="row q-gutter-x-md">
                   <div class="col">
                     <q-select
                       outlined
-                      v-model="selectedResult"
-                      :options="resultOptions"
+                      v-model="student.year_end_result.result"
+                      :options="studyYearResultOptions"
+                      map-options
+                      emit-value
+                      clearable
+                      clear-icon="mdi-close"
                       label="Kết quả"
                     />
                   </div>
                   <div class="col">
-                    <q-select outlined v-model="selectedRank" :options="rankOptions" label="Hạng" />
+                    <q-select
+                      outlined
+                      v-model="student.year_end_result.unit_ranking"
+                      :options="unitRankOptions"
+                      map-options
+                      emit-value
+                      clearable
+                      clear-icon="mdi-close"
+                      label="Hạng"
+                    />
                   </div>
                 </div>
-                <q-input v-model="comment" type="textarea" outlined label="Ghi chú" autogrow />
+                <q-input
+                  v-model="student.year_end_result.notes"
+                  type="textarea"
+                  outlined
+                  label="Ghi chú"
+                  autogrow
+                  maxlength="500"
+                />
 
-                <q-btn class="full-width" color="primary" icon="save" label="Lưu" type="submit" />
+                <q-btn
+                  class="full-width"
+                  color="primary"
+                  icon="save"
+                  label="Lưu"
+                  type="submit"
+                  :loading="student.isSaving"
+                />
               </q-form>
             </div>
           </q-card-section>
@@ -92,6 +134,7 @@
           <q-card-section>
             <div class="q-gutter-y-md">
               <div class="q-pt-sm">
+                <q-icon name="mdi-alert-circle-outline" size="2rem" />
                 <apexchart
                   width="100%"
                   height="200"
@@ -122,26 +165,20 @@
                   }}
                 </q-circular-progress>
               </div>
-              <div class="full-width flex q-gutter-x-sm items-center">
-                <div class="col-3 text-center"></div>
-                <div class="col">
-                  <q-list bordered separator>
-                    <q-item
-                      v-for="examScore in student.exam_scores.details"
-                      :key="examScore.exam.id"
-                    >
-                      <q-item-section>
-                        <q-item-label>{{ examScore.exam.name }}</q-item-label>
-                        <q-item-label caption>Hệ số: {{ examScore.exam.factor }}</q-item-label>
-                      </q-item-section>
-                      <q-item-section side>
-                        <q-item-label class="text-weight-bold">{{
-                          examScore.score ? Number(examScore.score).toFixed(1) : '(chưa làm)'
-                        }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </div>
+              <div class="full-width items-center">
+                <q-list bordered separator>
+                  <q-item v-for="examScore in student.exam_scores.details" :key="examScore.exam.id">
+                    <q-item-section>
+                      <q-item-label>{{ examScore.exam.name }}</q-item-label>
+                      <q-item-label caption>Hệ số: {{ examScore.exam.factor }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-item-label class="text-weight-bold">{{
+                        examScore.score ? Number(examScore.score).toFixed(1) : '(chưa làm)'
+                      }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
               </div>
             </div>
           </q-card-section>
@@ -157,35 +194,9 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { useAppStore } from 'src/stores/app-store'
 import { useUnitStore } from 'src/stores/unit-store'
+import { useStudentStore } from 'src/stores/student-store'
+import { studyYearResultOptions, unitRankOptions } from 'src/helpers/constants'
 
-const resultOptions = [
-  {
-    label: 'Lên lớp',
-    value: 'pass',
-  },
-  {
-    label: 'Ở lại lớp',
-    value: 'fail',
-  },
-]
-const rankOptions = [
-  {
-    label: 'Hạng Nhất',
-    value: 'first',
-  },
-  {
-    label: 'Hạng Nhì',
-    value: 'second',
-  },
-  {
-    label: 'Hạng Ba',
-    value: 'third',
-  },
-  {
-    label: 'Hạng Khuyến Khích',
-    value: 'encouragement',
-  },
-]
 const sortingByOptions = [
   {
     label: 'Tên học viên',
@@ -211,12 +222,15 @@ const sortingByOptions = [
     label: 'Điểm trung bình',
     value: 'avg_score',
   },
+  {
+    label: 'Hạng',
+    value: 'unit_ranking',
+  },
 ]
 const attendanceChartOptions = {
   title: {
     text: 'Tổng kết chuyên cần',
     align: 'center',
-
     floating: false,
   },
   colors: ['#21ba45', '#f2c037', '#c10015'],
@@ -235,11 +249,29 @@ const attendanceChartOptions = {
     type: 'bar',
     stacked: true,
     stackType: '100%',
+    toolbar: {
+      show: true,
+      tools: {
+        download: false,
+        customIcons: [
+          {
+            icon: '<i class="q-icon mdi mdi-alert-circle-outline" aria-hidden="true" style="font-size: 2rem;"></i>',
+            index: 0,
+            title: 'Xem chi tiết',
+            class: '',
+            click: function () {
+              console.log('clicked custom-icon')
+            },
+          },
+        ],
+      },
+    },
   },
   dataLabels: {},
 }
 const appStore = useAppStore()
 const unitStore = useUnitStore()
+const studentStore = useStudentStore()
 const router = useRouter()
 
 const { unitYearEndStudentStatistic, unitDetails } = storeToRefs(unitStore)
@@ -247,8 +279,6 @@ const { fetchUnitYearEndStatistic } = unitStore
 
 const selectedSortingBy = ref('first_name')
 const isSortAscending = ref(true)
-const selectedResult = ref(null)
-const selectedRank = ref(null)
 
 onMounted(async () => {
   appStore.setPageTitle('Tổng kết năm học')
@@ -361,6 +391,36 @@ const handleSorting = () => {
         )
       }
       break
+    case 'unit_ranking':
+      isSortAscending.value = true
+      unitYearEndStudentStatistic.value.sort((a, b) => {
+        const rankOrder = ['first', 'second', 'third', 'encouragement', null]
+        return (
+          rankOrder.indexOf(a.year_end_result.unit_ranking) -
+          rankOrder.indexOf(b.year_end_result.unit_ranking)
+        )
+      })
+      break
+  }
+}
+
+const handleYearEndResultSubmit = async (student) => {
+  student.isSaving = true
+  const yearEndResultRequestData = {
+    // student_code: student.year_end_result.student_code,
+    study_year_code: student.year_end_result.study_year_code,
+    result: student.year_end_result.result,
+    remark: student.year_end_result.remark,
+    unit_ranking: student.year_end_result.unit_ranking,
+    notes: student.year_end_result.notes,
+  }
+  try {
+    await studentStore.saveStudentYearEndResult(
+      student.year_end_result.student_code,
+      yearEndResultRequestData,
+    )
+  } finally {
+    student.isSaving = false
   }
 }
 </script>
