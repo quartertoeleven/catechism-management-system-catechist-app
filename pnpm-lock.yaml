@@ -11,6 +11,9 @@ importers:
       '@quasar/extras':
         specifier: ^1.17.0
         version: 1.17.0
+      '@zumer/snapdom':
+        specifier: ^2.7.0
+        version: 2.7.0
       apexcharts:
         specifier: ^5.10.4
         version: 5.10.4
@@ -1515,6 +1518,9 @@ packages:
 
   '@vue/shared@3.5.30':
     resolution: {integrity: sha512-YXgQ7JjaO18NeK2K9VTbDHaFy62WrObMa6XERNfNOkAhD1F1oDSf3ZJ7K6GqabZ0BvSDHajp8qfS5Sa2I9n8uQ==}
+
+  '@zumer/snapdom@2.7.0':
+    resolution: {integrity: sha512-ZiELKzDszeFOazPQ/ExXzgtdoW9jADVjDjInr5XDAlVdCx0RbNsFiG7RLyM48XnA7EyCA9yTvmXSc3ElDrTRqA==}
 
   abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -5621,6 +5627,8 @@ snapshots:
       vue: 3.5.30
 
   '@vue/shared@3.5.30': {}
+
+  '@zumer/snapdom@2.7.0': {}
 
   abort-controller@3.0.0:
     dependencies:
