@@ -35,20 +35,20 @@
                     Thánh lễ
                   </td>
                   <td class="text-center" style="vertical-align: middle">
-                    <div class="row justify-center q-gutter-md">
-                      <div class="text-center">
+                    <div class="row justify-center q-gutter-sm attendance-summary">
+                      <div class="text-center attendance-item">
                         <div class="text-body2 text-weight-bold text-positive">
                           {{ studentData.attendances?.mass_total_present || 0 }}
                         </div>
-                        <div class="text-caption text-grey-6">Hiện diện</div>
+                        <div class="text-body text-grey-6">Hiện diện</div>
                       </div>
-                      <div class="text-center">
+                      <div class="text-center attendance-item">
                         <div class="text-body2 text-weight-bold text-warning">
                           {{ studentData.attendances?.mass_total_leave || 0 }}
                         </div>
                         <div class="text-caption text-grey-6">Vắng phép</div>
                       </div>
-                      <div class="text-center">
+                      <div class="text-center attendance-item">
                         <div class="text-body2 text-weight-bold text-negative">
                           {{ studentData.attendances?.mass_total_absent || 0 }}
                         </div>
@@ -65,20 +65,20 @@
                     Giáo lý
                   </td>
                   <td class="text-center" style="vertical-align: middle">
-                    <div class="row justify-center q-gutter-md">
-                      <div class="text-center">
+                    <div class="row justify-center q-gutter-sm attendance-summary">
+                      <div class="text-center attendance-item">
                         <div class="text-body2 text-weight-bold text-positive">
                           {{ studentData.attendances?.lesson_total_present || 0 }}
                         </div>
                         <div class="text-caption text-grey-6">Hiện diện</div>
                       </div>
-                      <div class="text-center">
+                      <div class="text-center attendance-item">
                         <div class="text-body2 text-weight-bold text-warning">
                           {{ studentData.attendances?.lesson_total_leave || 0 }}
                         </div>
                         <div class="text-caption text-grey-6">Vắng phép</div>
                       </div>
-                      <div class="text-center">
+                      <div class="text-center attendance-item">
                         <div class="text-body2 text-weight-bold text-negative">
                           {{ studentData.attendances?.lesson_total_absent || 0 }}
                         </div>
@@ -93,13 +93,13 @@
         </div>
       </q-card-section>
       <q-card-section id="screenshotDetailSection" style="max-height: 60vh; overflow-y: auto">
-        <div class="">
-          <q-markup-table flat dense>
+        <div class="full-width">
+          <q-markup-table flat dense wrap-cells class="attendance-table">
             <thead>
               <tr>
-                <th class="text-left">Ngày</th>
-                <th class="text-center">Thánh lễ</th>
-                <th class="text-center">Giáo lý</th>
+                <th class="text-left" style="width: 35%">Ngày</th>
+                <th class="text-center" style="width: 32.5%">Thánh lễ</th>
+                <th class="text-center" style="width: 32.5%">Giáo lý</th>
               </tr>
             </thead>
             <tbody>
@@ -297,3 +297,59 @@ defineExpose({
   open,
 })
 </script>
+
+<style scoped>
+.attendance-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.attendance-table th,
+.attendance-table td {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.attendance-table .q-chip {
+  font-size: 0.6rem;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .attendance-table .q-chip {
+    font-size: 0.5rem;
+    padding: 2px 6px;
+  }
+}
+
+.attendance-summary {
+  flex-wrap: nowrap !important;
+  min-width: 0;
+}
+
+.attendance-item {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 400px) {
+  .attendance-item .text-body2 {
+    font-size: 0.9rem;
+  }
+
+  .attendance-item .text-caption {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .attendance-item .text-body2 {
+    font-size: 0.8rem;
+  }
+
+  .attendance-item .text-caption {
+    font-size: 0.6rem;
+  }
+}
+</style>
