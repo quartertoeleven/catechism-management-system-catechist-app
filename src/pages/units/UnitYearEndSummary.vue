@@ -67,9 +67,6 @@
         </template>
         <q-card>
           <q-card-section>
-            <!-- <div class="full-width text-center">
-              <div class="text-subtitle1 text-weight-bold">Nhận xét và đánh giá</div>
-            </div> -->
             <div class="full-width">
               <q-form class="q-gutter-y-md" @submit.prevent="handleYearEndResultSubmit(student)">
                 <q-input
@@ -133,14 +130,24 @@
 
           <q-card-section>
             <div class="q-gutter-y-md">
-              <div class="q-pt-sm">
-                <q-icon name="mdi-alert-circle-outline" size="2rem" />
+              <div class="q-pt-none">
                 <apexchart
                   width="100%"
                   height="200"
                   :options="attendanceChartOptions"
                   :series="student.attendances.chartData || []"
                 />
+                <div class="q-mt-sm text-center">
+                  <q-btn
+                    flat
+                    dense
+                    color="primary"
+                    icon="mdi-eye"
+                    label="Xem chi tiết điểm danh"
+                    @click="openAttendanceDetailModal(student)"
+                    size="sm"
+                  />
+                </div>
               </div>
               <div class="full-width text-center">
                 <div class="text-subtitle1 text-weight-bold">Điểm trung bình</div>
@@ -164,27 +171,26 @@
                       : '0.0'
                   }}
                 </q-circular-progress>
-              </div>
-              <div class="full-width items-center">
-                <q-list bordered separator>
-                  <q-item v-for="examScore in student.exam_scores.details" :key="examScore.exam.id">
-                    <q-item-section>
-                      <q-item-label>{{ examScore.exam.name }}</q-item-label>
-                      <q-item-label caption>Hệ số: {{ examScore.exam.factor }}</q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label class="text-weight-bold">{{
-                        examScore.score ? Number(examScore.score).toFixed(1) : '(chưa làm)'
-                      }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
+                <div class="q-mt-sm">
+                  <q-btn
+                    flat
+                    dense
+                    color="primary"
+                    icon="mdi-eye"
+                    label="Xem chi tiết điểm thi"
+                    @click="openExamDetailModal(student)"
+                    size="sm"
+                  />
+                </div>
               </div>
             </div>
           </q-card-section>
         </q-card>
       </q-expansion-item>
     </q-list>
+
+    <StudentAttendanceDetailModal ref="studentAttendanceDetailModalRef" />
+    <StudentExamResultDetailModal ref="studentExamResultDetailModalRef" />
   </div>
 </template>
 
@@ -196,6 +202,9 @@ import { useAppStore } from 'src/stores/app-store'
 import { useUnitStore } from 'src/stores/unit-store'
 import { useStudentStore } from 'src/stores/student-store'
 import { studyYearResultOptions, unitRankOptions } from 'src/helpers/constants'
+
+import StudentAttendanceDetailModal from './modals/StudentAttendanceDetailModal.vue'
+import StudentExamResultDetailModal from './modals/StudentExamResultDetailModal.vue'
 
 const sortingByOptions = [
   {
@@ -253,17 +262,6 @@ const attendanceChartOptions = {
       show: true,
       tools: {
         download: false,
-        customIcons: [
-          {
-            icon: '<i class="q-icon mdi mdi-alert-circle-outline" aria-hidden="true" style="font-size: 2rem;"></i>',
-            index: 0,
-            title: 'Xem chi tiết',
-            class: '',
-            click: function () {
-              console.log('clicked custom-icon')
-            },
-          },
-        ],
       },
     },
   },
@@ -279,6 +277,8 @@ const { fetchUnitYearEndStatistic } = unitStore
 
 const selectedSortingBy = ref('first_name')
 const isSortAscending = ref(true)
+const studentAttendanceDetailModalRef = ref(null)
+const studentExamResultDetailModalRef = ref(null)
 
 onMounted(async () => {
   appStore.setPageTitle('Tổng kết năm học')
@@ -422,5 +422,13 @@ const handleYearEndResultSubmit = async (student) => {
   } finally {
     student.isSaving = false
   }
+}
+
+const openExamDetailModal = (student) => {
+  studentExamResultDetailModalRef.value.open(student)
+}
+
+const openAttendanceDetailModal = (student) => {
+  studentAttendanceDetailModalRef.value.open(student)
 }
 </script>
