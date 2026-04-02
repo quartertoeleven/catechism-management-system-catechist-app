@@ -259,6 +259,7 @@ const takeModalScreenshot = async () => {
       const result = await snapdom(modalCardClone, {
         scale: 1, // Higher quality
         backgroundColor: '#ffffff',
+        embedFonts: true,
         // width: 1000,
         // height: modalCard.scrollHeight,
       })
