@@ -140,6 +140,7 @@ const takeModalScreenshot = async () => {
       const result = await snapdom(modalCardClone, {
         scale: 1, // Higher quality
         backgroundColor: '#ffffff',
+        embedFonts: true,
       })
 
       // Clean up temporary container
