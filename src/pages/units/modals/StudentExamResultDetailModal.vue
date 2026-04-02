@@ -50,10 +50,10 @@
       </q-card-section>
       <q-card-section id="screenshotDetailSection" style="max-height: 60vh; overflow-y: auto">
         <div class="">
-          <q-markup-table flat>
+          <q-markup-table flat wrap-cells class="text-grey-8">
             <thead>
               <tr>
-                <th class="text-left">Tên bài thi</th>
+                <th class="text-left" style="width: 50%">Tên bài thi</th>
                 <th class="text-center">Hệ số</th>
                 <th class="text-center">Điểm</th>
               </tr>
@@ -138,7 +138,7 @@ const takeModalScreenshot = async () => {
       await new Promise((resolve) => setTimeout(resolve, 100))
 
       const result = await snapdom(modalCardClone, {
-        scale: 2, // Higher quality
+        scale: 1, // Higher quality
         backgroundColor: '#ffffff',
       })
 
@@ -148,21 +148,15 @@ const takeModalScreenshot = async () => {
       // Convert to blob and share via Web Share API
       const blob = await result.toBlob({ type: 'image/png' })
 
-      if (navigator.share && navigator.canShare()) {
-        try {
-          await navigator.share({
-            title: `Chi tiết điểm thi - ${studentData.value?.saint_name || ''} ${studentData.value?.full_name || ''}`,
-            text: `Chi tiết điểm thi của học viên ${studentData.value?.code || ''}`,
-            files: [new File([blob], 'exam-result.png', { type: 'image/png' })],
-          })
-        } catch (shareError) {
-          console.error('Share failed:', shareError)
-          // Fallback to download if share fails
-          const url = URL.createObjectURL(blob)
-          downloadImage(url)
-        }
-      } else {
-        // Fallback to download if Web Share API not available
+      try {
+        await navigator.share({
+          title: `Chi tiết điểm thi - ${studentData.value?.saint_name || ''} ${studentData.value?.full_name || ''}`,
+          text: `Chi tiết điểm thi của học viên ${studentData.value?.code || ''}`,
+          files: [new File([blob], 'exam-result.png', { type: 'image/png' })],
+        })
+      } catch (shareError) {
+        console.error('Share failed:', shareError)
+        // Fallback to download if share fails
         const url = URL.createObjectURL(blob)
         downloadImage(url)
       }
