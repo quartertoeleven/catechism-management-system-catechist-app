@@ -111,7 +111,7 @@
                   <div class="text-caption">
                     {{ date.formatDate(attendance_entry.date, 'dddd', dateLocales) }}
                   </div>
-                  <div class="text-body text-weight-bold">
+                  <div class="text-caption text-weight-bold">
                     {{ date.formatDate(attendance_entry.date, 'DD/MM/YYYY', dateLocales) }}
                   </div>
                 </td>
