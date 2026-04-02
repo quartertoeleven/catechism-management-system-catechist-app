@@ -40,7 +40,7 @@
                         <div class="text-body2 text-weight-bold text-positive">
                           {{ studentData.attendances?.mass_total_present || 0 }}
                         </div>
-                        <div class="text-body text-grey-6">Hiện diện</div>
+                        <div class="text-caption text-grey-6">Hiện diện</div>
                       </div>
                       <div class="text-center attendance-item">
                         <div class="text-body2 text-weight-bold text-warning">
@@ -94,7 +94,7 @@
       </q-card-section>
       <q-card-section id="screenshotDetailSection" style="max-height: 60vh; overflow-y: auto">
         <div class="full-width">
-          <q-markup-table flat dense wrap-cells class="attendance-table">
+          <q-markup-table flat dense wrap-cells class="attendance-table full-width text-grey-8">
             <thead>
               <tr>
                 <th class="text-left" style="width: 35%">Ngày</th>
@@ -108,10 +108,10 @@
                 :key="`${studentData?.code}-${attendance_entry.date}`"
               >
                 <td class="text-left">
-                  <div class="text-caption text-grey-8">
+                  <div class="text-caption">
                     {{ date.formatDate(attendance_entry.date, 'dddd', dateLocales) }}
                   </div>
-                  <div>
+                  <div class="text-body text-weight-bold">
                     {{ date.formatDate(attendance_entry.date, 'DD/MM/YYYY', dateLocales) }}
                   </div>
                 </td>
@@ -257,9 +257,9 @@ const takeModalScreenshot = async () => {
       await new Promise((resolve) => setTimeout(resolve, 100))
 
       const result = await snapdom(modalCardClone, {
-        scale: 2, // Higher quality
+        scale: 1, // Higher quality
         backgroundColor: '#ffffff',
-        // width: modalCard.scrollWidth,
+        // width: 1000,
         // height: modalCard.scrollHeight,
       })
 
@@ -269,21 +269,15 @@ const takeModalScreenshot = async () => {
       // Convert to blob and share via Web Share API
       const blob = await result.toBlob({ type: 'image/png' })
 
-      if (navigator.share && navigator.canShare()) {
-        try {
-          await navigator.share({
-            title: `Chi tiết điểm danh - ${studentData.value?.saint_name || ''} ${studentData.value?.full_name || ''}`,
-            text: `Chi tiết điểm danh của học viên ${studentData.value?.code || ''}`,
-            files: [new File([blob], 'attendance-detail.png', { type: 'image/png' })],
-          })
-        } catch (shareError) {
-          console.error('Share failed:', shareError)
-          // Fallback to download if share fails
-          const url = URL.createObjectURL(blob)
-          downloadImage(url)
-        }
-      } else {
-        // Fallback to download if Web Share API not available
+      try {
+        await navigator.share({
+          title: `Chi tiết điểm danh - ${studentData.value?.saint_name || ''} ${studentData.value?.full_name || ''}`,
+          text: `Chi tiết điểm danh của học viên ${studentData.value?.code || ''}`,
+          files: [new File([blob], 'attendance-detail.png', { type: 'image/png' })],
+        })
+      } catch (shareError) {
+        console.error('Share failed:', shareError)
+        // Fallback to download if share fails
         const url = URL.createObjectURL(blob)
         downloadImage(url)
       }
