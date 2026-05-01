@@ -13,11 +13,24 @@
     >
       <template v-slot:after>
         <q-btn
-          color="primary"
+          flat
           :icon="isSortAscending ? 'mdi-sort-ascending' : 'mdi-sort-descending'"
           class="full-height"
           @click="onChangeSortingOrder"
         />
+        <q-separator vertical class="q-mx-sm" />
+        <q-btn flat icon="mdi-export" class="full-height">
+          <q-menu auto-close>
+            <q-list style="min-width: 100px">
+              <q-item clickable @click="exportToExcel">
+                <q-item-section class="col-auto">
+                  <q-icon name="mdi-file-excel" size="sm" />
+                </q-item-section>
+                <q-item-section>Xuất ra Excel</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </template>
     </q-select>
     <q-list bordered separator>
@@ -167,7 +180,7 @@
                 >
                   {{
                     student.exam_scores.final_average
-                      ? Number(student.exam_scores.final_average).toFixed(1)
+                      ? Number(student.exam_scores.final_average)
                       : '0.0'
                   }}
                 </q-circular-progress>
@@ -192,16 +205,24 @@
     <StudentAttendanceDetailModal ref="studentAttendanceDetailModalRef" />
     <StudentExamResultDetailModal ref="studentExamResultDetailModalRef" />
   </div>
+
+  <!-- <template #headerActions>
+    <q-btn flat round dense>
+      <q-icon name="more_vert" />
+    </q-btn>
+  </template> -->
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { Loading } from 'quasar'
+import { onMounted, ref, toRaw } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { useAppStore } from 'src/stores/app-store'
 import { useUnitStore } from 'src/stores/unit-store'
 import { useStudentStore } from 'src/stores/student-store'
 import { studyYearResultOptions, unitRankOptions } from 'src/helpers/constants'
+import { exportYearEndSummaryToExcel } from 'src/helpers/exporters'
 
 import StudentAttendanceDetailModal from './modals/StudentAttendanceDetailModal.vue'
 import StudentExamResultDetailModal from './modals/StudentExamResultDetailModal.vue'
@@ -321,7 +342,8 @@ const onChangeSortingOrder = () => {
 }
 
 const handleSorting = () => {
-  console.log('Sorting by changed to:', selectedSortingBy.value)
+  const rankOrder = ['first', 'second', 'third', 'encouragement', null]
+
   switch (selectedSortingBy.value) {
     case 'first_name':
       if (isSortAscending.value) {
@@ -394,7 +416,6 @@ const handleSorting = () => {
     case 'unit_ranking':
       isSortAscending.value = true
       unitYearEndStudentStatistic.value.sort((a, b) => {
-        const rankOrder = ['first', 'second', 'third', 'encouragement', null]
         return (
           rankOrder.indexOf(a.year_end_result.unit_ranking) -
           rankOrder.indexOf(b.year_end_result.unit_ranking)
@@ -430,5 +451,19 @@ const openExamDetailModal = (student) => {
 
 const openAttendanceDetailModal = (student) => {
   studentAttendanceDetailModalRef.value.open(student)
+}
+
+const exportToExcel = async () => {
+  Loading.show()
+  try {
+    const clonedUnitDetails = structuredClone(toRaw(unitDetails.value))
+    const clonedUnitYearEndStatistic = structuredClone(toRaw(unitYearEndStudentStatistic.value))
+
+    clonedUnitYearEndStatistic.sort((a, b) => a.first_name.localeCompare(b.first_name, 'vi'))
+
+    await exportYearEndSummaryToExcel(clonedUnitDetails, clonedUnitYearEndStatistic)
+  } finally {
+    Loading.hide()
+  }
 }
 </script>
