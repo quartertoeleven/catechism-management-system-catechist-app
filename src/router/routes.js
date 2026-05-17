@@ -86,6 +86,12 @@ const routes = [
     name: 'login',
   },
 
+  {
+    path: '/callback',
+    component: () => import('pages/auth/CallbackPage.vue'),
+    name: 'callback',
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

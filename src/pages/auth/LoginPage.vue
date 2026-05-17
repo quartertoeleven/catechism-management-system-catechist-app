@@ -23,7 +23,7 @@
             label="Mật khẩu"
             type="password"
           />
-          <div class="">
+          <div>
             <q-btn
               class="full-width"
               type="submit"
@@ -34,6 +34,14 @@
           </div>
         </q-form>
       </div>
+
+      <q-btn
+        class="full-width"
+        color="primary"
+        label="Đăng nhập bằng SSO"
+        icon="mdi-login"
+        @click="handleSSOLogin"
+      />
       <div class="q-mt-xl full-width text-center text-caption">
         <div>Phát triển bởi <span class="text-weight-bold">Quarter To Eleven</span></div>
         <sub
@@ -46,10 +54,13 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useAuthStore } from 'src/stores/auth-store'
-import { useAppStore } from 'src/stores/app-store'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+
+import { useLogto } from '@logto/vue'
+
+import { useAuthStore } from 'src/stores/auth-store'
+import { useAppStore } from 'src/stores/app-store'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -57,6 +68,7 @@ const appStore = useAppStore()
 
 const { appVersion } = storeToRefs(appStore)
 const { login } = authStore
+const { signIn } = useLogto()
 
 const loginFormData = ref({
   username: '',
@@ -66,5 +78,10 @@ const loginFormData = ref({
 const handleLogin = async () => {
   await login(loginFormData.value.username, loginFormData.value.password)
   router.replace({ name: 'home' })
+}
+
+const handleSSOLogin = () => {
+  // TODO: Implement SSO login
+  signIn(process.env.LOGTO_REDIRECT_URI)
 }
 </script>

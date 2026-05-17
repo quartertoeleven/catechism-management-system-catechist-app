@@ -6,7 +6,7 @@ import {
   createWebHashHistory,
 } from 'vue-router'
 import routes from './routes'
-import { useAuthStore } from 'src/stores/auth-store'
+// import { useAuthStore } from 'src/stores/auth-store'
 
 /*
  * If not building with SSR mode, you can
@@ -18,13 +18,15 @@ import { useAuthStore } from 'src/stores/auth-store'
  */
 
 export default defineRouter(function ({ store /*, ssrContext */ }) {
-  const authStore = useAuthStore(store)
+  // const authStore = useAuthStore(store)
 
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : process.env.VUE_ROUTER_MODE === 'history'
       ? createWebHistory
       : createWebHashHistory
+
+  console.log('Router created', store)
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -37,21 +39,21 @@ export default defineRouter(function ({ store /*, ssrContext */ }) {
   })
 
   Router.beforeEach(async (to, from, next) => {
-    if (!authStore.isAuthenticated) {
-      await authStore.getAuthState()
-      if (authStore.isAuthenticated) {
-        if (to.name === 'login') {
-          return next({ name: 'home' })
-        }
-        return next()
-      } else {
-        if (to.name !== 'login') {
-          return next({ name: 'login' })
-        }
-      }
-    } else if (authStore.isAuthenticated && to.name === 'login') {
-      return next({ name: 'home' })
-    }
+    // if (!authStore.isAuthenticated) {
+    //   await authStore.getAuthState()
+    //   if (authStore.isAuthenticated) {
+    //     if (to.name === 'login') {
+    //       return next({ name: 'home' })
+    //     }
+    //     return next()
+    //   } else {
+    //     if (to.name !== 'login') {
+    //       return next({ name: 'login' })
+    //     }
+    //   }
+    // } else if (authStore.isAuthenticated && to.name === 'login') {
+    //   return next({ name: 'home' })
+    // }
     return next()
   })
 
